@@ -1,11 +1,17 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Outlet } from 'react-router-dom';
 
 export default () => {
   return (
     <div>
       <p>About</p>
-      <Link to={'/welcome'}>Welcome</Link>
+      <p>
+        <Link to={'/welcome'}>Welcome</Link>
+      </p>
+      <p>
+        <Link to={'/about/something'}>something</Link>
+      </p>
+      <Outlet />
     </div>
   );
 };

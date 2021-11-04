@@ -1,11 +1,13 @@
 import React, { useRef } from 'react';
 import {
   BrowserRouter,
+  Navigate,
   RouteObject,
   useLocation,
   useRoutes,
 } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
+import Route from './Route';
 
 /**
  * Sets up required `BrowserRouter` as well as a `HelmetProvider` for dynamically updating the page title on the fly
@@ -23,15 +25,48 @@ export const BrowserProvider: React.FC = ({ children }) => (
 export type RouteType = RouteObject;
 
 const AppRouter: React.FC<{ routes: RouteType[] }> = ({ routes }) => {
-  const Router = useRoutes(routes);
+  const Router = useRoutes([
+    ...routes,
+    // {
+    //   path: '*',
+    //   element: <Navigate to="/" />,
+    // },
+  ]);
   return Router;
 };
 
-const useRouterProvider: (routes: RouteType[]) => JSX.Element = (routes) => {
+function checkAndSetupDefaultRoute(routes: Route[]) {
+  // If the routes provide a '*' then no additional work by the lib is necessary
+  const starRoute = routes.find((r) => r.path === '*');
+  if (starRoute) return routes;
+
+  // If the routes define a `default`: true, that is the fallback route for '*'
+  // Toss in validation to make sure there is no dynamic slug, must be a static string
+  let defaultRoute = routes.find((r) => r.default);
+
+  if (!defaultRoute)
+    // If the routes do not provide a '*', don't provide a `default` and they define a '/' then we can redirect to that
+    defaultRoute = routes.find((r) => r.path === '/');
+
+  if (defaultRoute)
+    return [
+      ...routes,
+      {
+        path: '*',
+        element: <Navigate to={defaultRoute.path} />,
+      },
+    ];
+
+  return routes;
+}
+
+const useRouterProvider: (routes: Route[]) => JSX.Element = (routes) => {
   const wrappedOrUnwrappedRouter = useRef<JSX.Element>(null);
   if (wrappedOrUnwrappedRouter.current) return wrappedOrUnwrappedRouter.current;
 
-  const routerProvider = <AppRouter {...{ routes }} />;
+  const routesWithDefault = checkAndSetupDefaultRoute(routes);
+
+  const routerProvider = <AppRouter {...{ routes: routesWithDefault }} />;
 
   try {
     // eslint-disable-next-line react-hooks/rules-of-hooks
