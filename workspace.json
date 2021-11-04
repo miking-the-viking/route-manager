@@ -1,8 +1,6 @@
 {
   "version": 2,
-  "cli": {
-    "defaultCollection": "@nrwl/react"
-  },
+  "cli": { "defaultCollection": "@nrwl/react" },
   "defaultProject": "demo",
   "generators": {
     "@nrwl/react": {
@@ -11,13 +9,8 @@
         "linter": "eslint",
         "babel": true
       },
-      "component": {
-        "style": "styled-components"
-      },
-      "library": {
-        "style": "styled-components",
-        "linter": "eslint"
-      }
+      "component": { "style": "styled-components" },
+      "library": { "style": "styled-components", "linter": "eslint" }
     }
   },
   "projects": {
@@ -67,20 +60,14 @@
         },
         "serve": {
           "executor": "@nrwl/web:dev-server",
-          "options": {
-            "buildTarget": "demo:build"
-          },
+          "options": { "buildTarget": "demo:build" },
           "configurations": {
-            "production": {
-              "buildTarget": "demo:build:production"
-            }
+            "production": { "buildTarget": "demo:build:production" }
           }
         },
         "lint": {
           "executor": "@nrwl/linter:eslint",
-          "options": {
-            "lintFilePatterns": ["apps/demo/**/*.{ts,tsx,js,jsx}"]
-          }
+          "options": { "lintFilePatterns": ["apps/demo/**/*.{ts,tsx,js,jsx}"] }
         },
         "test": {
           "executor": "@nrwl/jest:jest",
@@ -105,15 +92,46 @@
             "devServerTarget": "demo:serve"
           },
           "configurations": {
-            "production": {
-              "devServerTarget": "demo:serve:production"
-            }
+            "production": { "devServerTarget": "demo:serve:production" }
           }
         },
         "lint": {
           "executor": "@nrwl/linter:eslint",
+          "options": { "lintFilePatterns": ["apps/demo-e2e/**/*.{js,ts}"] }
+        }
+      }
+    },
+    "react": {
+      "root": "libs/react",
+      "sourceRoot": "libs/react/src",
+      "projectType": "library",
+      "targets": {
+        "build": {
+          "executor": "@nrwl/web:package",
+          "outputs": ["{options.outputPath}"],
           "options": {
-            "lintFilePatterns": ["apps/demo-e2e/**/*.{js,ts}"]
+            "outputPath": "dist/libs/react",
+            "tsConfig": "libs/react/tsconfig.lib.json",
+            "project": "libs/react/package.json",
+            "entryFile": "libs/react/src/index.ts",
+            "external": ["react", "react-dom"],
+            "babelConfig": "@nrwl/react/plugins/bundle-babel",
+            "rollupConfig": "@nrwl/react/plugins/bundle-rollup",
+            "assets": [
+              { "glob": "libs/react/README.md", "input": ".", "output": "." }
+            ]
+          }
+        },
+        "lint": {
+          "executor": "@nrwl/linter:eslint",
+          "options": { "lintFilePatterns": ["libs/react/**/*.{ts,tsx,js,jsx}"] }
+        },
+        "test": {
+          "executor": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/react"],
+          "options": {
+            "jestConfig": "libs/react/jest.config.js",
+            "passWithNoTests": true
           }
         }
       }
