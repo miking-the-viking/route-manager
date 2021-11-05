@@ -3,7 +3,7 @@ import { lazy } from 'react';
 import AsyncComponent from './AsyncComponent';
 import RouteComponentWrapper from './RouteComponentWrapper';
 
-export type RouteInput<N extends string, P extends string, CN extends string, CP extends string> = {
+export type RouteInput<N extends string, P extends string> = {
   /**
    * Distinct key for this route which can be used anywhere in the application as distinct identifier
    *
@@ -46,30 +46,30 @@ export type RouteInput<N extends string, P extends string, CN extends string, CP
   /**
    * If the route has nested children, they will be defined here
    */
-  children?: Route<CN, CP, string, string>[];
+  children?: Route<N, P>[];
 };
 
-class Route<N extends string, P extends string, CN extends string, CP extends string> {
+class Route<N extends string, P extends string> {
   public readonly key: symbol;
   public readonly path: P;
   public readonly name: N;
   public readonly element: JSX.Element;
   public readonly default: boolean;
-  public readonly children?: Route<CN, CP, string, string>[];
+  public readonly children?: Route<N, P>[];
 
   /**
    * A Static route is one that does not contain any dynamic slugs, may still be a descendant of a dynamic slug route.
    */
-  static Static<RouterState extends Record<string, any>, N extends string, P extends string, CN extends string, CP extends string>(
-    routeProps: RouteInput<N, P, CN, CP>
+  static Static<RouterState extends Record<string, any>, N extends string, P extends string>(
+    routeProps: RouteInput<N, P>
   ) {
-    return new Route<N, P, CN, CP>(routeProps);
+    return new Route<N, P>(routeProps);
   }
 
-  static Dynamic<RouterState extends Record<string, any>, N extends string, P extends string, CN extends string, CP extends string>(
-    routeProps: RouteInput<N, P, CN, CP>
+  static Dynamic<RouterState extends Record<string, any>, N extends string, P extends string>(
+    routeProps: RouteInput<N, P>
   ) {
-    return new Route<N, P, CN, CP>(routeProps);
+    return new Route<N, P>(routeProps);
   }
 
   constructor({
@@ -79,7 +79,7 @@ class Route<N extends string, P extends string, CN extends string, CP extends st
     importComponent: componentImportFunction,
     default: defaultInput = false,
     children,
-  }: RouteInput<N, P, CN, CP>) {
+  }: RouteInput<N, P>) {
     this.key = key;
     this.path = path;
     this.name = name;

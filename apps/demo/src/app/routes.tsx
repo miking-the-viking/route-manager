@@ -32,7 +32,7 @@ const routes = [
 /**
  * Intellisense will be like 
   const Link: React.FC<LinkProps & React.RefAttributes<HTMLAnchorElement> & {
-    to: "Welcome" | "About";
+    to: "Welcome" | "About" | "Something";
   }>
  */
 export const { Link } = createRouter([WELCOME_ROUTE, ABOUT_ROUTE]);
