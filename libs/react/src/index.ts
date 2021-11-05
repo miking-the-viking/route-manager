@@ -1,4 +1,4 @@
 import useRouterProvider, { BrowserProvider } from './useRouterProvider';
-import Route, { RouteInput } from './Route';
+import Route from './Route';
 
-export { useRouterProvider, BrowserProvider, Route, RouteInput };
+export { useRouterProvider, BrowserProvider, Route };
