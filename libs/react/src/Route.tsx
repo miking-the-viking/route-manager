@@ -1,9 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react';
 import { lazy } from 'react';
 import AsyncComponent from './AsyncComponent';
 import RouteComponentWrapper from './RouteComponentWrapper';
 
-export type RouteInput = {
+export type RouteInput<RouterState extends Record<string, any>> = {
   /**
    * Distinct key for this route which can be used anywhere in the application as distinct identifier
    *
@@ -46,30 +47,37 @@ export type RouteInput = {
   /**
    * If the route has nested children, they will be defined here
    */
-  children?: Route[];
+  children?: Route<RouterState>[];
+
+  /**
+   *
+   */
+  slugs?: (
+    state?: RouterState
+  ) => Promise<{ name: string; params: Record<string, any> }[]>;
 };
 
-class Route {
+class Route<RouterState extends Record<string, any>> {
   public readonly key: symbol;
   public readonly path: string;
   public readonly name: string;
   public readonly element: JSX.Element;
   public readonly default: boolean;
-  public readonly children?: Route[];
+  public readonly children?: Route<RouterState>[];
 
   /**
    * A Static route is one that does not contain any dynamic slugs, may still be a descendant of a dynamic slug route.
    */
   static Static<RouterState extends Record<string, any>>(
-    routeProps: RouteInput
+    routeProps: RouteInput<RouterState>
   ) {
-    return new Route(routeProps);
+    return new Route<RouterState>(routeProps);
   }
 
   static Dynamic<RouterState extends Record<string, any>>(
-    routeProps: RouteInput
+    routeProps: RouteInput<RouterState>
   ) {
-    return new Route(routeProps);
+    return new Route<RouterState>(routeProps);
   }
 
   constructor({
@@ -79,7 +87,7 @@ class Route {
     importComponent: componentImportFunction,
     default: defaultInput = false,
     children,
-  }: RouteInput) {
+  }: RouteInput<RouterState>) {
     this.key = key;
     this.path = path;
     this.name = name;

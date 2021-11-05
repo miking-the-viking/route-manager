@@ -1,5 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react';
 import { Helmet } from 'react-helmet-async';
+import { useParams } from 'react-router-dom';
 import Route from './Route';
 
 /**
@@ -12,14 +14,16 @@ import Route from './Route';
  * @param Component
  * @param Wrapper Optional wrapper than can enclose the page component for more specific page context.
  */
-const RouteComponentWrapper = (route: Route, Component: any) => () => {
+const RouteComponentWrapper = <RouterState extends Record<string, any>>(
+  route: Route<RouterState>,
+  Component: any
+) => () => {
   // eslint-disable-next-line react-hooks/rules-of-hooks
   // const loadingState = useRouteRedirectCheck(route);
   // TODO: check redirects
 
   // eslint-disable-next-line react-hooks/rules-of-hooks
-  // const params = useParams();
-  console.log('hey');
+  const params = useParams();
 
   const HelmetWrappedComponent = () => (
     <>
@@ -28,7 +32,7 @@ const RouteComponentWrapper = (route: Route, Component: any) => () => {
       </Helmet>
       {/* Must not render the component unless the useRouteRedirectCheck returns true */}
       {/* {loadingState ? <Component /> : null} */}
-      <Component />
+      <Component {...params} />
     </>
   );
 

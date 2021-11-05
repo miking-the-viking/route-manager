@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useRef } from 'react';
 import {
   BrowserRouter,
@@ -35,7 +36,7 @@ const AppRouter: React.FC<{ routes: RouteType[] }> = ({ routes }) => {
   return Router;
 };
 
-function checkAndSetupDefaultRoute(routes: Route[]) {
+function checkAndSetupDefaultRoute(routes: Route<any>[]) {
   // If the routes provide a '*' then no additional work by the lib is necessary
   const starRoute = routes.find((r) => r.path === '*');
   if (starRoute) return routes;
@@ -60,7 +61,9 @@ function checkAndSetupDefaultRoute(routes: Route[]) {
   return routes;
 }
 
-const useRouterProvider: (routes: Route[]) => JSX.Element = (routes) => {
+const useRouterProvider: <RouterState extends Record<string, any>>(
+  routes: Route<RouterState>[]
+) => JSX.Element = (routes) => {
   const wrappedOrUnwrappedRouter = useRef<JSX.Element>(null);
   if (wrappedOrUnwrappedRouter.current) return wrappedOrUnwrappedRouter.current;
 
