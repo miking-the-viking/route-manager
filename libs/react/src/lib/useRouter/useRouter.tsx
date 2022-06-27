@@ -1,34 +1,58 @@
 import { useRef } from 'react';
-import { RouteObject, useRoutes, useLocation } from 'react-router-dom';
+import { useInRouterContext, useRoutes } from 'react-router-dom';
 import BrowserProvider from '../BrowserProvider/BrowserProvider';
+import RouterProps from '../types/RouterProps';
 
-type RouterProps = {
-  routes: RouteObject[];
-};
-
-const Router: React.FC<RouterProps> = ({ routes }) => {
+const Router = <State extends Record<string, any>>({
+  routes,
+}: RouterProps<State>) => {
   const router = useRoutes(routes);
   return router;
 };
 
 /**
- * Returns a fully loaded Router for the given routes
+ * Wrap the router in
+ *  - Conditional BrowserProvider
+ *  - Conditional Layout prop (for reusable application layout or route-driven components live Nav)
  */
-const useRouter = ({ routes }: RouterProps) => {
-  const wrappedOrUnwrappedRouter = useRef<JSX.Element | null>(null);
-  if (wrappedOrUnwrappedRouter.current) return wrappedOrUnwrappedRouter.current;
+function setupRouterWrappers<State extends Record<string, any>>(
+  { routes, Layout }: RouterProps<State>,
+  ref: React.MutableRefObject<JSX.Element | null>,
+  inRouterAlready: boolean
+) {
+  if (ref.current) return;
 
-  const routerProvider = <Router {...{ routes }} />;
+  const router = <Router {...{ routes }} />;
 
-  try {
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    useLocation();
-    wrappedOrUnwrappedRouter.current = routerProvider;
-  } catch (e) {
-    wrappedOrUnwrappedRouter.current = (
-      <BrowserProvider>{routerProvider}</BrowserProvider>
+  // If a Layout has been defined for state or style, then wrap the router in it.
+  const conditionallyWrappedInLayoutRouter = Layout ? (
+    <Layout>{router}</Layout>
+  ) : (
+    router
+  );
+
+  // If necessary, wrap the router in the BrowserProvider
+  if (inRouterAlready) {
+    ref.current = conditionallyWrappedInLayoutRouter;
+  } else {
+    ref.current = (
+      <BrowserProvider>{conditionallyWrappedInLayoutRouter}</BrowserProvider>
     );
   }
+}
+
+/**
+ * Returns a fully loaded Router for the given routes
+ */
+const useRouter = <State extends Record<string, any>>(
+  props: RouterProps<State>
+) => {
+  // We don't want to keep rerendering the router, so will use a ref
+  const wrappedOrUnwrappedRouter = useRef<JSX.Element | null>(null);
+  const inRouterAlready = useInRouterContext();
+
+  setupRouterWrappers(props, wrappedOrUnwrappedRouter, inRouterAlready);
+
   return wrappedOrUnwrappedRouter.current;
 };
 

@@ -12,9 +12,10 @@ const FavouritesContextProvider: React.FC<FavouritesContextProviderProps> = ({
   color: faveColor,
   children,
 }) => {
+  console.log('FavouritesContextProvider');
   const [band, setBand] = useState<string>(faveBand ?? '');
   const [color, setColor] = useState<Color>(faveColor);
-
+  console.log('FavouritesContextProvider done state');
   return (
     <FavouritesContext.Provider value={{ band, setBand, color, setColor }}>
       {children}

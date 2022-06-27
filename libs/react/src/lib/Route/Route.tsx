@@ -1,5 +1,5 @@
 import { lazy, Suspense } from 'react';
-import RouteEvaluationWrapper from '../RouteEvaluationWrapper/RouteEvaluationWrapper';
+import ConstructorTypeWithCreate from '../types/ConstructorTypeWithCreate';
 
 type RouteInput<State extends Record<string, any>> = {
   /**
@@ -10,12 +10,12 @@ type RouteInput<State extends Record<string, any>> = {
   /**
    * The Route's `title`, used for titling the page with an option to use a hook
    */
-  title: string | (() => string);
+  useTitle: string | (() => string);
 
   /**
    * `children` is used for the `children` of the the RouterObject
    */
-  children?: RouteInput<State>[];
+  children?: Route<State>[];
 
   /**
    * Function which imports the component. Used for `element` in the RouterObject
@@ -31,15 +31,21 @@ type RouteInput<State extends Record<string, any>> = {
    * ```
    */
   importComponent: () => Promise<Record<string, any> | { default: Element }>; // TODO: Double check JSX.Element vs. Element
+
+  /**
+   * Optional access rules
+   */
+  rules?: ConstructorTypeWithCreate<State>[];
 };
 
 class Route<State extends Record<string, any>> {
   public readonly element: JSX.Element;
   constructor(
-    public readonly title: RouteInput<State>['title'],
+    public readonly useTitle: RouteInput<State>['useTitle'],
     public readonly path: RouteInput<State>['path'],
     importComponent: RouteInput<State>['importComponent'],
-    public readonly children: RouteInput<State>['children']
+    public readonly children: RouteInput<State>['children'],
+    public readonly rules: RouteInput<State>['rules']
   ) {
     // setup the `element` property using the `importComponent` method
     // this will be a lazily loaded component and will simultaneously provide
@@ -62,12 +68,13 @@ class Route<State extends Record<string, any>> {
    *
    */
   static create<State extends Record<string, any>>({
-    title,
+    useTitle,
     path,
     importComponent,
     children,
+    rules,
   }: RouteInput<State>) {
-    return new Route(title, path, importComponent, children);
+    return new Route(useTitle, path, importComponent, children, rules);
   }
 }
 

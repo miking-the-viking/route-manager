@@ -3,7 +3,7 @@ import { useLocation, useParams } from 'react-router-dom';
 
 const NOT_FOUND_ROUTE = Route.create({
   path: '*',
-  title() {
+  useTitle() {
     console.log('Evaluating NOT_FOUND_ROUTE title');
     const { pathname } = useLocation();
     return `"${pathname}" Not Found`;

@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { COLORS } from '../../../context/Favourites/Color';
 
@@ -6,12 +7,18 @@ const Bar = styled.div`
     flex-grow
 `;
 
-
 const Nav: React.FC = () => {
-    
-  return <Bar>{COLORS.map((col) => {
-    <
-  })}</Bar>;
+  return (
+    <Bar>
+      {COLORS.map((col) => {
+        return (
+          <Link key={col} to={`/club/color/${col}`}>
+            {col}
+          </Link>
+        );
+      })}
+    </Bar>
+  );
 };
 
 export default Nav;

@@ -2,7 +2,7 @@ import { Route } from '@route-manager/react';
 
 const WELCOME_ROUTE = Route.create({
   path: '*',
-  title() {
+  useTitle() {
     const date = new Date();
     const hours = date.getHours();
     const time = `${hours}:${date.getMinutes()}:${date.getSeconds()}${
