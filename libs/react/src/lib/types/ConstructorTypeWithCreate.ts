@@ -6,7 +6,7 @@ import ConstructorType from './ConstructorType';
  */
 type ConstructorTypeWithCreate<R> = ConstructorType<R> & {
   // eslint-disable-next-line @typescript-eslint/ban-types
-  create(args: Record<string, any>): {};
+  create(args: Record<string, any>): InstanceType<ConstructorType<R>>;
 };
 
 export default ConstructorTypeWithCreate;

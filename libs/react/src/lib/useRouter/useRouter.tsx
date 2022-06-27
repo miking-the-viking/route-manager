@@ -1,17 +1,13 @@
-import { useRef } from 'react';
+import { PropsWithChildren, useRef } from 'react';
 import { useInRouterContext, useRoutes } from 'react-router-dom';
 import BrowserProvider from '../BrowserProvider/BrowserProvider';
+import IndexRouter from '../IndexRouter/IndexRouter';
+import RouteManagerContextProvider from '../RouteManagerContext/RouteManagerContextProvider';
 import RouterProps from '../types/RouterProps';
-
-const Router = <State extends Record<string, any>>({
-  routes,
-}: RouterProps<State>) => {
-  const router = useRoutes(routes);
-  return router;
-};
 
 /**
  * Wrap the router in
+ *  - Route Manager Context
  *  - Conditional BrowserProvider
  *  - Conditional Layout prop (for reusable application layout or route-driven components live Nav)
  */
@@ -22,7 +18,7 @@ function setupRouterWrappers<State extends Record<string, any>>(
 ) {
   if (ref.current) return;
 
-  const router = <Router {...{ routes }} />;
+  const router = <IndexRouter {...{ routes }} />;
 
   // If a Layout has been defined for state or style, then wrap the router in it.
   const conditionallyWrappedInLayoutRouter = Layout ? (
@@ -31,12 +27,25 @@ function setupRouterWrappers<State extends Record<string, any>>(
     router
   );
 
+  // Setup the RouteManagerContext, accessible by the Layout wrapper
+  const wrappedInRouteManagerContext = (
+    <RouteManagerContextProvider<State>
+      state={
+        // TODO: State
+        {} as State
+      }
+      routes={routes}
+    >
+      {conditionallyWrappedInLayoutRouter}
+    </RouteManagerContextProvider>
+  );
+
   // If necessary, wrap the router in the BrowserProvider
   if (inRouterAlready) {
-    ref.current = conditionallyWrappedInLayoutRouter;
+    ref.current = wrappedInRouteManagerContext;
   } else {
     ref.current = (
-      <BrowserProvider>{conditionallyWrappedInLayoutRouter}</BrowserProvider>
+      <BrowserProvider>{wrappedInRouteManagerContext}</BrowserProvider>
     );
   }
 }

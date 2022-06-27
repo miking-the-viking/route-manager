@@ -1,4 +1,4 @@
-import useRouter from '@route-manager/react';
+import { useRouter } from '@route-manager/react';
 import React from 'react';
 import Nav from './components/page/Nav/Nav';
 import Color from './context/Favourites/Color';

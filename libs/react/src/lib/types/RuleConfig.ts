@@ -5,6 +5,7 @@ import ConstructorTypeWithCreate from './ConstructorTypeWithCreate';
  */
 type RuleConfig<R> = {
   class: ConstructorTypeWithCreate<R>;
+  instance: InstanceType<ConstructorTypeWithCreate<R>>;
 };
 
 export default RuleConfig;

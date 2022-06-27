@@ -1,4 +1,6 @@
 import { lazy, Suspense } from 'react';
+import RouteWrapper from '../RouteWrapper/RouteWrapper';
+import Rule from '../Rule/Rule';
 import ConstructorTypeWithCreate from '../types/ConstructorTypeWithCreate';
 
 type RouteInput<State extends Record<string, any>> = {
@@ -35,7 +37,7 @@ type RouteInput<State extends Record<string, any>> = {
   /**
    * Optional access rules
    */
-  rules?: ConstructorTypeWithCreate<State>[];
+  rules?: Array<ConstructorTypeWithCreate<Rule<State>>>;
 };
 
 class Route<State extends Record<string, any>> {
@@ -53,7 +55,7 @@ class Route<State extends Record<string, any>> {
     const LazilyLoadedComponent = lazy(async () => {
       const Component = await importComponent();
       return {
-        default: RouteEvaluationWrapper<State>(this, Component.default),
+        default: RouteWrapper<State>(this, Component.default),
       };
     });
     this.element = (

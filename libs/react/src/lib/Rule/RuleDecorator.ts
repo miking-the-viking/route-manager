@@ -10,6 +10,18 @@ const RULES: RuleMap<any> = {};
 const PROPERTY_KEY = Symbol('rules');
 
 /**
+ * Retrieves the factory config from FACTORIES, or throws an error
+ */
+export function getRuleConfig<T>(Target: ConstructorTypeWithCreate<T>) {
+  console.log(RULES);
+  if (!RULES[Target.name])
+    throw Error(
+      `${Target.name} is not a registered factory class. Add the @FactoryModel decorator to it`
+    );
+  return RULES[Target.name];
+}
+
+/**
  * Decorator to register a class as a model that should be used with the `evaluator` calls
  */
 function RuleDecorator<T>(Target: ConstructorTypeWithCreate<T>) {
@@ -25,8 +37,11 @@ function RuleDecorator<T>(Target: ConstructorTypeWithCreate<T>) {
   //   },
   //   { defaults: {}, options: {} } as any
   // );
+
+  const instance = Target.create({}) as InstanceType<typeof Target>;
   RULES[Target.name] = {
     class: Target,
+    instance,
   };
 
   return Target;

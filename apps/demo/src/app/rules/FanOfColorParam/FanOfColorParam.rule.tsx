@@ -15,18 +15,24 @@ function isFanOfColor(favouriteColor: Color, color: Color) {
 class FanOfColorParamRule<T extends Record<string, any>> {
   static NOT_A_FAN = (color: Color) =>
     `You are not a fan of ${color} and are therefore not allowed access`;
+
   constructor(
     /**
      * evaluator function must return null (if the rule passes) or a message indicating the failure
      */
     private readonly evaluator: RuleEvaluator<T> // TODO: App state
   ) {}
+
   static create() {
     return new FanOfColorParamRule((state) =>
       isFanOfColor(Color.Red, Color.Blue)
         ? null
         : FanOfColorParamRule.NOT_A_FAN(Color.Red)
     );
+  }
+
+  public evaluate(state: T) {
+    return this.evaluator(state);
   }
 }
 
