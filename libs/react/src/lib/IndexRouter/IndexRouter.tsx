@@ -3,7 +3,7 @@ import RouterProps from '../types/RouterProps';
 
 const IndexRouter = <State extends Record<string, any>>({
   routes,
-}: RouterProps<State>) => {
+}: Pick<RouterProps<State>, 'routes'>) => {
   const router = useRoutes(routes);
   return router;
 };

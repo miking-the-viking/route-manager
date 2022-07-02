@@ -6,38 +6,37 @@ import RouteManagerContext from './RouteManagerContext';
 import { RouteManagerState } from './RouteManagerState';
 
 type RouteManagerContextProviderProps<State extends Record<string, any>> = {
-  state: State; // | () => State// TODO: Will a function be better?
+  // useState: State | (() => State); // TODO: Will a function be better?
+  useState: () => State;
   routes: Route<State>[];
 } & PropsWithChildren;
 
 const RouteManagerContextProvider = <State extends Record<string, any>>({
   children,
-  state,
+  useState,
   routes,
 }: RouteManagerContextProviderProps<State>) => {
   console.log('RouteManagerContextProvider');
 
+  const state = useState();
+
   const params = useParams();
   const checkRoute = useCallback(
     (route: Route<State>) => {
-      console.log('checkRoute', route, params);
+      console.log('checkRoute', route, params, state);
 
       // if route does not have rules, they can access it
       if (!route.rules || route.rules.length === 0) return true;
 
       // all rules must pass to access the route
       const failureMessage = route.rules
-        .map((rule) => {
-          console.log('Evaluating rule ', rule);
-          evaluate(rule);
-          return undefined;
-        })
+        .map((rule) => evaluate(rule as any)(params, state))
         .filter((v) => !!v);
 
       console.log('failure message: ', failureMessage);
       return false;
     },
-    [params]
+    [params, state]
   );
 
   // Type safety to the RouteManagerContext, for convenience

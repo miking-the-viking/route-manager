@@ -13,18 +13,12 @@ function useRedirectCheck<RouterState extends Record<string, unknown> = any>(
   route: Route<RouterState>
 ) {
   console.log('useRedirectCheck', route);
-  const {
-    state,
-    checkRoute,
-    //redirectIfNotPermitted, allowedRouteBySymbol
-  } = useRouteManagerContext();
+  const { state, checkRoute } = useRouteManagerContext();
   console.log('state', state);
 
   useEffect(() => {
     checkRoute(route);
   }, [checkRoute, route]);
-
-  // return allowedRouteBySymbol(route.key, params);
 
   return null;
 }

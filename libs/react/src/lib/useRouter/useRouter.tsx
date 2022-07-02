@@ -12,7 +12,7 @@ import RouterProps from '../types/RouterProps';
  *  - Conditional Layout prop (for reusable application layout or route-driven components live Nav)
  */
 function setupRouterWrappers<State extends Record<string, any>>(
-  { routes, Layout }: RouterProps<State>,
+  { routes, Layout, useState }: RouterProps<State>,
   ref: React.MutableRefObject<JSX.Element | null>,
   inRouterAlready: boolean
 ) {
@@ -29,13 +29,7 @@ function setupRouterWrappers<State extends Record<string, any>>(
 
   // Setup the RouteManagerContext, accessible by the Layout wrapper
   const wrappedInRouteManagerContext = (
-    <RouteManagerContextProvider<State>
-      state={
-        // TODO: State
-        {} as State
-      }
-      routes={routes}
-    >
+    <RouteManagerContextProvider<State> useState={useState} routes={routes}>
       {conditionallyWrappedInLayoutRouter}
     </RouteManagerContextProvider>
   );

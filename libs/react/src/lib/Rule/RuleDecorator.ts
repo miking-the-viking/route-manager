@@ -13,7 +13,6 @@ const PROPERTY_KEY = Symbol('rules');
  * Retrieves the factory config from FACTORIES, or throws an error
  */
 export function getRuleConfig<T>(Target: ConstructorTypeWithCreate<T>) {
-  console.log(RULES);
   if (!RULES[Target.name])
     throw Error(
       `${Target.name} is not a registered factory class. Add the @FactoryModel decorator to it`
@@ -27,6 +26,7 @@ export function getRuleConfig<T>(Target: ConstructorTypeWithCreate<T>) {
 function RuleDecorator<T>(Target: ConstructorTypeWithCreate<T>) {
   const classMetadata = Reflect.getMetadata(PROPERTY_KEY, Target);
   console.log(classMetadata);
+  // TODO: Decorate evaluator function
   // const { defaults, options } = Object.keys(classMetadata).reduce(
   //   (acc, key) => {
   //     // grab any values from property decorators to apply here

@@ -1,6 +1,5 @@
 import { lazy, Suspense } from 'react';
 import RouteWrapper from '../RouteWrapper/RouteWrapper';
-import Rule from '../Rule/Rule';
 import ConstructorTypeWithCreate from '../types/ConstructorTypeWithCreate';
 
 type RouteInput<State extends Record<string, any>> = {
@@ -37,7 +36,7 @@ type RouteInput<State extends Record<string, any>> = {
   /**
    * Optional access rules
    */
-  rules?: Array<ConstructorTypeWithCreate<Rule<State>>>;
+  rules?: Array<ConstructorTypeWithCreate<State>>;
 };
 
 class Route<State extends Record<string, any>> {
