@@ -163,7 +163,7 @@ describe('Router class', () => {
           Link({ to: 'route-3-1-2-3-4-5-6-7-8-9-10-11-12' });
 
           // Try out the following route, it will have a typescript compilation error due to being an unsupported string literal
-          Link({ to: 'route-3-1-2-3-4-5-6-7-8-9-10-11-12-13' });
+          // Link({ to: 'route-3-1-2-3-4-5-6-7-8-9-10-11-12-13' });
         });
 
         it.todo('Runtime error if the `to` doesnt match any Routes');
