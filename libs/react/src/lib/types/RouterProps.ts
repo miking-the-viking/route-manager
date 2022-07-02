@@ -1,11 +1,11 @@
 import { PropsWithChildren } from 'react';
 import Route from '../Route/Route';
 
-type RouterProps<State extends Record<string, any>> = {
+type RouterProps<Key extends string, State extends Record<string, any>> = {
   /**
    * All Routes for the SPA
    */
-  routes: Route<State>[];
+  routes: Route<Key, State>[];
   /**
    * Optional Layout component, will have access to router hooks
    *

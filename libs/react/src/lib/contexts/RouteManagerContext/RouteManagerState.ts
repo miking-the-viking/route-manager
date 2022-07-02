@@ -1,6 +1,9 @@
-import Route from '../Route/Route';
+import Route from '../../Route/Route';
 
-export interface RouteManagerState<RouterState extends Record<string, any>> {
+export interface RouteManagerState<
+  Key extends string,
+  RouterState extends Record<string, any>
+> {
   /**
    * Application state used for route generation and rule evaluation
    */
@@ -8,14 +11,14 @@ export interface RouteManagerState<RouterState extends Record<string, any>> {
   /**
    * All known routes in the application
    */
-  routes: Route<RouterState>[];
+  routes: Route<Key, RouterState>[];
 
   /**
    * Check if route is accessible
    *
    * Returns true if the route can be accessed, false otherwise
    */
-  checkRoute: (route: Route<RouterState>) => boolean;
+  checkRoute: (route: Route<Key, RouterState>) => boolean;
 
   // redirectCheck: (route: Route<RouterState>, params: Record<string, any>) => void;
 

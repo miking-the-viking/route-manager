@@ -1,8 +1,8 @@
-import { PropsWithChildren, useRef } from 'react';
-import { useInRouterContext, useRoutes } from 'react-router-dom';
-import BrowserProvider from '../BrowserProvider/BrowserProvider';
-import IndexRouter from '../IndexRouter/IndexRouter';
-import RouteManagerContextProvider from '../RouteManagerContext/RouteManagerContextProvider';
+import { useRef } from 'react';
+import { useInRouterContext } from 'react-router-dom';
+import BrowserProvider from '../components/BrowserProvider/BrowserProvider';
+import IndexRouter from '../components/IndexRouter/IndexRouter';
+import RouteManagerContextProvider from '../contexts/RouteManagerContext/RouteManagerContextProvider';
 import RouterProps from '../types/RouterProps';
 
 /**
@@ -11,8 +11,11 @@ import RouterProps from '../types/RouterProps';
  *  - Conditional BrowserProvider
  *  - Conditional Layout prop (for reusable application layout or route-driven components live Nav)
  */
-function setupRouterWrappers<State extends Record<string, any>>(
-  { routes, Layout, useState }: RouterProps<State>,
+function setupRouterWrappers<
+  Key extends string,
+  State extends Record<string, any>
+>(
+  { routes, Layout, useState }: RouterProps<Key, State>,
   ref: React.MutableRefObject<JSX.Element | null>,
   inRouterAlready: boolean
 ) {
@@ -29,7 +32,10 @@ function setupRouterWrappers<State extends Record<string, any>>(
 
   // Setup the RouteManagerContext, accessible by the Layout wrapper
   const wrappedInRouteManagerContext = (
-    <RouteManagerContextProvider<State> useState={useState} routes={routes}>
+    <RouteManagerContextProvider<Key, State>
+      useState={useState}
+      routes={routes}
+    >
       {conditionallyWrappedInLayoutRouter}
     </RouteManagerContextProvider>
   );
@@ -47,8 +53,8 @@ function setupRouterWrappers<State extends Record<string, any>>(
 /**
  * Returns a fully loaded Router for the given routes
  */
-const useRouter = <State extends Record<string, any>>(
-  props: RouterProps<State>
+const useRouter = <Key extends string, State extends Record<string, any>>(
+  props: RouterProps<Key, State>
 ) => {
   // We don't want to keep rerendering the router, so will use a ref
   const wrappedOrUnwrappedRouter = useRef<JSX.Element | null>(null);
@@ -56,7 +62,7 @@ const useRouter = <State extends Record<string, any>>(
 
   setupRouterWrappers(props, wrappedOrUnwrappedRouter, inRouterAlready);
 
-  return wrappedOrUnwrappedRouter.current;
+  return wrappedOrUnwrappedRouter.current ?? <p>Loading</p>;
 };
 
 export default useRouter;

@@ -5,6 +5,7 @@ import Color from './context/Favourites/Color';
 import useFavouriteColor from './context/Favourites/hooks/useFavouriteColor';
 import FavouritesContextProvider from './context/FavouritesContextProvider';
 import ROUTES from './routes';
+import ROUTER from './router';
 
 const Layout: React.FC<React.PropsWithChildren> = ({ children }) => {
   return (
@@ -15,7 +16,7 @@ const Layout: React.FC<React.PropsWithChildren> = ({ children }) => {
   );
 };
 
-export function App() {
+function App() {
   const router = useRouter({
     routes: ROUTES,
     Layout,
@@ -27,6 +28,7 @@ export function App() {
       };
     },
   });
+
   return (
     <div>
       <h1>App</h1>

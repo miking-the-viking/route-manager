@@ -1,28 +1,35 @@
 import { PropsWithChildren, useCallback, useContext } from 'react';
 import { useParams } from 'react-router-dom';
-import Route from '../Route/Route';
-import evaluate from '../Rule/evaluate';
+import Route from '../../Route/Route';
+import evaluate from '../../Rule/evaluate';
+
 import RouteManagerContext from './RouteManagerContext';
 import { RouteManagerState } from './RouteManagerState';
 
-type RouteManagerContextProviderProps<State extends Record<string, any>> = {
+type RouteManagerContextProviderProps<
+  Key extends string,
+  State extends Record<string, any>
+> = {
   // useState: State | (() => State); // TODO: Will a function be better?
   useState: () => State;
-  routes: Route<State>[];
+  routes: Route<Key, State>[];
 } & PropsWithChildren;
 
-const RouteManagerContextProvider = <State extends Record<string, any>>({
+const RouteManagerContextProvider = <
+  Key extends string,
+  State extends Record<string, any>
+>({
   children,
   useState,
   routes,
-}: RouteManagerContextProviderProps<State>) => {
+}: RouteManagerContextProviderProps<Key, State>) => {
   console.log('RouteManagerContextProvider');
 
   const state = useState();
 
   const params = useParams();
   const checkRoute = useCallback(
-    (route: Route<State>) => {
+    (route: Route<Key, State>) => {
       console.log('checkRoute', route, params, state);
 
       // if route does not have rules, they can access it
@@ -41,7 +48,7 @@ const RouteManagerContextProvider = <State extends Record<string, any>>({
 
   // Type safety to the RouteManagerContext, for convenience
   const AppStateTypedRouteManagerContext = RouteManagerContext as React.Context<
-    RouteManagerState<State>
+    RouteManagerState<Key, State>
   >;
 
   return (

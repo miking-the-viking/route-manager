@@ -1,52 +1,69 @@
 import { lazy, Suspense } from 'react';
-import RouteWrapper from '../RouteWrapper/RouteWrapper';
-import ConstructorTypeWithCreate from '../types/ConstructorTypeWithCreate';
+import RouteWrapper from '../components/RouteWrapper/RouteWrapper';
+import IRoute from './IRoute.interface';
+import RouteProps from './RouteProps.type';
 
-type RouteInput<State extends Record<string, any>> = {
+/**
+ * This `Route` class is used to both define a Route Manager Route and a React Router Route (the configuration aligns)
+ *
+ * Simply use the `Route.create` method to get a typesafe initialization of a Route instance which can be plugged directly into React Router, if necessary.
+ */
+class Route<
   /**
-   * The Route's `path`, direct translation to RouteObject
+   * Generic to represent the string tuple of all Route `key` values
    */
-  path: string;
-
+  Key extends string,
   /**
-   * The Route's `title`, used for titling the page with an option to use a hook
+   * Generic to represent all App State relevant to the Router
    */
-  useTitle: string | (() => string);
-
+  State extends Record<string, any>
+> implements IRoute<Key, State>
+{
   /**
-   * `children` is used for the `children` of the the RouterObject
+   * React Router `element`, the JSX Element that will be rendered by this route
    */
-  children?: Route<State>[];
-
-  /**
-   * Function which imports the component. Used for `element` in the RouterObject
-   *
-   * The function definition ensures that it is imported lazily
-   *
-   * THE COMPONENT MUST BE THE DEFAULT EXPORT
-   *
-   * @example
-   * ```
-   * // since the WELCOME.route is a sibling file of the Welcome.tsx component
-   * importComponent: () => import('./Welcome'),
-   * ```
-   */
-  importComponent: () => Promise<Record<string, any> | { default: Element }>; // TODO: Double check JSX.Element vs. Element
-
-  /**
-   * Optional access rules
-   */
-  rules?: Array<ConstructorTypeWithCreate<State>>;
-};
-
-class Route<State extends Record<string, any>> {
   public readonly element: JSX.Element;
   constructor(
-    public readonly useTitle: RouteInput<State>['useTitle'],
-    public readonly path: RouteInput<State>['path'],
-    importComponent: RouteInput<State>['importComponent'],
-    public readonly children: RouteInput<State>['children'],
-    public readonly rules: RouteInput<State>['rules']
+    /**
+     * Distinct `key` used to identify this route uniquely in the application from other registered component routes
+     */
+    public readonly key: Key,
+    /**
+     * Custom route-specific hook used to title the page on load using Helmet
+     */
+    public readonly useTitle: IRoute<Key, State>['useTitle'],
+    /**
+     * The Route's `path`
+     */
+    public readonly path: IRoute<Key, State>['path'],
+    /**
+     * Import method for default export component file to be used as the rendered page
+     */
+    importComponent: RouteProps<Key, State>['importComponent'],
+    /**
+     * The Route's `children`
+     */
+    public readonly children: IRoute<Key, State>['children'],
+    /**
+     * The Route's `rules`
+     */
+    public readonly rules: IRoute<Key, State>['rules']
+  ) {
+    this.element = Route<Key, State>.lazyElement(importComponent, this);
+  }
+
+  /**
+   * Given the `importComponent` prop and the corresponding `Route` instance will utilize the `default`
+   * export of the `importComponent` and apply the `RouteWrapper` to it.
+   *
+   * This will then return a suspenseful Lazily loaded component.
+   */
+  private static lazyElement<
+    Key extends string,
+    State extends Record<string, any>
+  >(
+    importComponent: () => Promise<Record<string, any> | { default: Element }>,
+    route: Route<Key, State>
   ) {
     // setup the `element` property using the `importComponent` method
     // this will be a lazily loaded component and will simultaneously provide
@@ -54,10 +71,10 @@ class Route<State extends Record<string, any>> {
     const LazilyLoadedComponent = lazy(async () => {
       const Component = await importComponent();
       return {
-        default: RouteWrapper<State>(this, Component.default),
+        default: RouteWrapper<Key, State>(route, Component.default),
       };
     });
-    this.element = (
+    return (
       <Suspense fallback={<p>Loading...</p>}>
         <LazilyLoadedComponent />
       </Suspense>
@@ -66,16 +83,23 @@ class Route<State extends Record<string, any>> {
 
   /**
    * Create a Route instance from a RouteInput object
-   *
    */
-  static create<State extends Record<string, any>>({
+  static create<Key extends string, State extends Record<string, any>>({
+    key,
     useTitle,
     path,
     importComponent,
     children,
     rules,
-  }: RouteInput<State>) {
-    return new Route(useTitle, path, importComponent, children, rules);
+  }: RouteProps<Key, State>) {
+    return new Route<Key, State>(
+      key,
+      useTitle,
+      path,
+      importComponent,
+      children,
+      rules
+    );
   }
 }
 

@@ -1,5 +1,5 @@
 import { Helmet } from 'react-helmet-async';
-import Route from '../Route/Route';
+import Route from '../../Route/Route';
 import useRedirectCheck from './hooks/useRedirectCheck';
 
 /**
@@ -9,7 +9,10 @@ import useRedirectCheck from './hooks/useRedirectCheck';
  *
  */
 const RouteWrapper =
-  <State extends Record<string, any>>(route: Route<State>, Component: any) =>
+  <Key extends string, State extends Record<string, any>>(
+    route: Route<Key, State>,
+    Component: any
+  ) =>
   () => {
     // eslint-disable-next-line react-hooks/rules-of-hooks
     const useRedirectCheckResult = useRedirectCheck(route);

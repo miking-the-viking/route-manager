@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import Route from '../../Route/Route';
-import useRouteManagerContext from '../../RouteManagerContext/hooks/useRouteManagerContext';
+import useRouteManagerContext from '../../../contexts/RouteManagerContext/hooks/useRouteManagerContext';
+import Route from '../../../Route/Route';
 
 /**
  * Convenience hook used to check a Route config against the current Router state,
@@ -9,9 +9,10 @@ import useRouteManagerContext from '../../RouteManagerContext/hooks/useRouteMana
  *
  * @param route
  */
-function useRedirectCheck<RouterState extends Record<string, unknown> = any>(
-  route: Route<RouterState>
-) {
+function useRedirectCheck<
+  Key extends string,
+  RouterState extends Record<string, unknown> = any
+>(route: Route<Key, RouterState>) {
   console.log('useRedirectCheck', route);
   const { state, checkRoute } = useRouteManagerContext();
   console.log('state', state);

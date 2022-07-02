@@ -1,3 +1,9 @@
+import Route from './Route';
+
 describe('Route class', () => {
-  it.todo('things');
+  describe('create', () => {
+    it('returns an instance of Route', () => {
+      expect(Route.create({} as any)).toBeInstanceOf(Route);
+    });
+  });
 });

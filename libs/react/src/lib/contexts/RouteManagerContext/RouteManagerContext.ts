@@ -2,7 +2,7 @@ import React from 'react';
 import { RouteManagerState } from './RouteManagerState';
 
 const RouteManagerContext = React.createContext<
-  RouteManagerState<Record<string, any>>
+  RouteManagerState<any, Record<string, any>>
 >({
   state: {},
   routes: [],

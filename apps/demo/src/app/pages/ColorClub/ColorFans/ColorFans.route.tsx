@@ -8,6 +8,7 @@ import FanOfColorParamRule from '../../../rules/FanOfColorParam/FanOfColorParam.
  * Only accessible by fans of that color
  */
 const COLOR_FANS_ROUTE = Route.create({
+  key: 'Color Fans',
   path: 'fans',
   useTitle() {
     const { color } = useParams();
