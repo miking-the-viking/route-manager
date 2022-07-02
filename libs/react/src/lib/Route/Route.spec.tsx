@@ -1,9 +1,9 @@
-import Route, { StaticRoute } from './Route';
+import Route, { AbstractRoute, ParameterizedRoute, StaticRoute } from './Route';
 
 const importComponent = (content: string) => () =>
   Promise.resolve(() => <p>{content}</p>);
 
-const staticRoute = Route.create({
+const STATIC_ROUTE = Route.create({
   key: 'static route',
   path: '*',
   useTitle() {
@@ -12,7 +12,7 @@ const staticRoute = Route.create({
   importComponent: importComponent('static route'),
 });
 
-const ParameterizedRoute = Route.create({
+const PARAMETERIZED_ROUTE = Route.create({
   key: 'parameterized route',
   path: ':param1/separator/:param2',
   useTitle() {
@@ -24,8 +24,13 @@ const ParameterizedRoute = Route.create({
 describe('Route class', () => {
   describe('create', () => {
     it('returns an instance of Route', () => {
-      expect(staticRoute).toBeInstanceOf(StaticRoute);
-      expect(ParameterizedRoute).toBeInstanceOf(Route);
+      expect(STATIC_ROUTE).toBeInstanceOf(AbstractRoute);
+      expect(StaticRoute.isStaticRoute(STATIC_ROUTE)).toBeTruthy();
+
+      expect(PARAMETERIZED_ROUTE).toBeInstanceOf(AbstractRoute);
+      expect(
+        ParameterizedRoute.isParameterizedRoute(PARAMETERIZED_ROUTE)
+      ).toBeTruthy();
     });
 
     describe('path', () => {
@@ -42,10 +47,10 @@ describe('Route class', () => {
           // No type errors, path can be string since no params are defined
           expect(
             Route.create({ ...BASE_ROUTE_PARAMS, path: '*' })
-          ).toBeInstanceOf(Route);
+          ).toBeInstanceOf(ParameterizedRoute);
           expect(
             Route.create({ ...BASE_ROUTE_PARAMS, path: 'some/bunch/of/paths' })
-          ).toBeInstanceOf(Route);
+          ).toBeInstanceOf(ParameterizedRoute);
         });
       });
 
@@ -58,19 +63,34 @@ describe('Route class', () => {
             },
             importComponent: importComponent('parameterized route'),
           } as const;
-
-          // Type error because path is not including :test anywhere
           expect(
             Route.create({
               ...BASE_ROUTE_PARAMS,
-              path: '*',
+              path: ':param1/:param2',
               params: {
-                test: 'something',
+                param1: 'test',
+                param2: 'test',
               },
             })
-          ).toBeInstanceOf(Route);
+          );
+          // Type error because path is not including :test anywhere
+          // expect(
+          //   Route.create({
+          //     ...BASE_ROUTE_PARAMS,
+          //     path: '*',
+          //     params: {
+          //       test: 'something',
+          //     },
+          //   })
+          // ).toBeInstanceOf(Route);
         });
       });
     });
+  });
+
+  describe('wrapping the default imported component with lazyElement', () => {
+    it.todo(
+      'Wraps the default exprt of the importComponent in a RouteWrapper connecting the Route and Compoment'
+    );
   });
 });
