@@ -1,9 +1,9 @@
-import Route from './Route';
+import Route, { StaticRoute } from './Route';
 
 const importComponent = (content: string) => () =>
   Promise.resolve(() => <p>{content}</p>);
 
-const StaticRoute = Route.create({
+const staticRoute = Route.create({
   key: 'static route',
   path: '*',
   useTitle() {
@@ -24,7 +24,7 @@ const ParameterizedRoute = Route.create({
 describe('Route class', () => {
   describe('create', () => {
     it('returns an instance of Route', () => {
-      expect(StaticRoute).toBeInstanceOf(Route);
+      expect(staticRoute).toBeInstanceOf(StaticRoute);
       expect(ParameterizedRoute).toBeInstanceOf(Route);
     });
 

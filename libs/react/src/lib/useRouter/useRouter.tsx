@@ -3,7 +3,6 @@ import { useInRouterContext } from 'react-router-dom';
 import BrowserProvider from '../components/BrowserProvider/BrowserProvider';
 import IndexRouter from '../components/IndexRouter/IndexRouter';
 import RouteManagerContextProvider from '../contexts/RouteManagerContext/RouteManagerContextProvider';
-import RouterProps from '../types/RouterProps';
 
 /**
  * Wrap the router in
