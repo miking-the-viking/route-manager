@@ -162,9 +162,16 @@ describe('Router class', () => {
           Link({ to: 'route-3-1-2-3-4-5-6' });
           Link({ to: 'route-3-1-2-3-4-5-6-7-8-9-10-11-12' });
 
-          // Try out the following route, it will have a compilation error due to being unknown
-          // Link({ to: 'route-3-1-2-3-4-5-6-7-8-9-10-11-12-13' });
+          // Try out the following route, it will have a typescript compilation error due to being an unsupported string literal
+          Link({ to: 'route-3-1-2-3-4-5-6-7-8-9-10-11-12-13' });
         });
+
+        it.todo('Runtime error if the `to` doesnt match any Routes');
+      });
+    });
+    describe('params', () => {
+      describe('if params are defined', () => {
+        it.todo('then Link uses the routes params for the `params` prop');
       });
     });
   });
