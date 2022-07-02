@@ -276,6 +276,8 @@ a.key; //?
 b.key; //?
 b.params; //?
 a.params; //?
+b.path; //?
+a.path; //?
 
 // statics work
 Both.abstractStaticFunc(); //?
