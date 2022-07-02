@@ -3,6 +3,7 @@ import { useInRouterContext } from 'react-router-dom';
 import BrowserProvider from '../components/BrowserProvider/BrowserProvider';
 import IndexRouter from '../components/IndexRouter/IndexRouter';
 import RouteManagerContextProvider from '../contexts/RouteManagerContext/RouteManagerContextProvider';
+import { RouterProps } from '../Router/Router';
 
 /**
  * Wrap the router in
@@ -12,9 +13,10 @@ import RouteManagerContextProvider from '../contexts/RouteManagerContext/RouteMa
  */
 function setupRouterWrappers<
   Key extends string,
-  State extends Record<string, any>
+  State extends Record<string, any>,
+  Params extends string
 >(
-  { routes, Layout, useState }: RouterProps<Key, State>,
+  { routes, Layout, useState }: RouterProps<Key, State, Params>,
   ref: React.MutableRefObject<JSX.Element | null>,
   inRouterAlready: boolean
 ) {
@@ -52,8 +54,12 @@ function setupRouterWrappers<
 /**
  * Returns a fully loaded Router for the given routes
  */
-const useRouter = <Key extends string, State extends Record<string, any>>(
-  props: RouterProps<Key, State>
+const useRouter = <
+  Key extends string,
+  State extends Record<string, any>,
+  Params extends string
+>(
+  props: RouterProps<Key, State, Params>
 ) => {
   // We don't want to keep rerendering the router, so will use a ref
   const wrappedOrUnwrappedRouter = useRef<JSX.Element | null>(null);

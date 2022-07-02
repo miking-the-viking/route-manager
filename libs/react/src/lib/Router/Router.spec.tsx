@@ -150,7 +150,9 @@ describe('Router class', () => {
     describe('to prop', () => {
       describe('known routes', () => {
         it('provides recommendations for known route keys, base routes and nested children routes', () => {
-          const { Link } = Router.generate([ROUTE_1, ROUTE_2, ROUTE_3]);
+          const { Link } = Router.generate({
+            routes: [ROUTE_1, ROUTE_2, ROUTE_3],
+          });
           Link({ to: 'route1' });
           Link({ to: 'route2' });
           Link({ to: 'route3' });

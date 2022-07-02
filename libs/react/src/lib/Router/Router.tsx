@@ -1,3 +1,5 @@
+import { State } from 'history';
+import { Key, PropsWithChildren } from 'react';
 import SafeLink from '../components/SafeLink/SafeLink';
 import ParameterizedRoute from '../Route/ParameterizedRoute/ParameterizedRoute';
 import Route from '../Route/Route';
@@ -13,7 +15,11 @@ class Router<
   AppState extends Record<string, any>,
   ParamKeys extends string
 > {
+  /**
+   * Typesafe Link component for use in the Application that will autosuggest `to` and `props` (hopefully)
+   */
   public readonly Link: typeof SafeLink<KeyOfRoutes<Key, AppState>>;
+
   constructor(
     /**
      * Routes for a router are an array of Static and ParameterizedRoutes
@@ -21,7 +27,8 @@ class Router<
     public readonly routes: (
       | StaticRoute<Key, AppState>
       | ParameterizedRoute<Key, ParamKeys, AppState>
-    )[]
+    )[],
+    public readonly Layout?: (props: PropsWithChildren) => JSX.Element
   ) {
     this.Link = SafeLink;
   }
@@ -34,17 +41,65 @@ class Router<
     Key extends string,
     State extends Record<string, any>,
     ParamKeys extends string
-  >(
+  >({
+    routes,
+    Layout,
+  }: {
     /**
      * Routes are an array of Static and Parameterized routes
      */
     routes: (
       | StaticRoute<Key, State>
       | ParameterizedRoute<Key, ParamKeys, State>
-    )[]
-  ) {
-    return new Router(routes);
+    )[];
+    Layout?: (props: PropsWithChildren) => JSX.Element;
+  }) {
+    return new Router(routes, Layout);
   }
 }
 
+export type RouterProps<
+  Key extends string,
+  State extends Record<string, any>,
+  Params extends string
+> = Parameters<typeof Router<Key, State, Params>['generate']>[number];
+
 export default Router;
+
+const BASE_ROUTE = {
+  importComponent: () => Promise.resolve({ default: () => <p>test</p> }),
+  useTitle() {
+    return 'computed title from hook';
+  },
+} as const;
+const ROUTE_1 = Route.create({
+  ...BASE_ROUTE,
+  key: 'route 1 key',
+  path: '*',
+});
+const ROUTE_2 = Route.create({
+  ...BASE_ROUTE,
+  key: 'route 2 key',
+  path: 'route 2',
+  children: [ROUTE_1],
+});
+const ROUTE_3 = Route.create({
+  ...BASE_ROUTE,
+  key: 'route 3 key',
+  path: ':param1/:param2', // must include both :param1 and :param2
+  params: {
+    param1: 'test',
+    param2: 'other test',
+  },
+});
+
+const { Link } = Router.generate({
+  routes: [ROUTE_1, ROUTE_2, ROUTE_3],
+});
+
+const SomeThingWithTypesafeLink = () => (
+  <>
+    <Link to="route 3 key" />
+    <Link to="route 1 key" />
+  </>
+);
