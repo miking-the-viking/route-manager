@@ -1,4 +1,7 @@
-import Route, { AbstractRoute, ParameterizedRoute, StaticRoute } from './Route';
+import AbstractRoute from './AbstractRoute/AbstractRoute';
+import ParameterizedRoute from './ParameterizedRoute/ParameterizedRoute';
+import Route from './Route';
+import StaticRoute from './StaticRoute/StaticRoute';
 
 const importComponent = (content: string) => () =>
   Promise.resolve(() => <p>{content}</p>);
