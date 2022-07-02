@@ -2,6 +2,13 @@ import ImportComponentFunc from '../../types/ImportComponentFunc';
 import UseTitle from '../../types/UseTitle';
 import AbstractRoute from '../AbstractRoute/AbstractRoute';
 
+type StaticRouteProps<Key extends string, Path extends string> = {
+  key: Key;
+  path: string;
+  importComponent: ImportComponentFunc;
+  children?: AbstractRoute<Key, Path>[];
+  useTitle: UseTitle;
+};
 /**
  * A StaticRoute is non-parameterized ensuring that the `path` will always be consistent, like `'welcome'` or `'*'`
  *
@@ -18,19 +25,16 @@ class StaticRoute<Key extends string> extends AbstractRoute<Key, string> {
     super(key, path, importComponent, useTitle, children);
   }
 
+  /**
+   * Create a
+   */
   static create<Key extends string, Path extends string>({
     key,
     path,
     importComponent,
     children,
     useTitle,
-  }: {
-    key: Key;
-    path: string;
-    importComponent: ImportComponentFunc;
-    children?: AbstractRoute<Key, Path>[];
-    useTitle: UseTitle;
-  }) {
+  }: StaticRouteProps<Key, Path>) {
     return new StaticRoute<Key>(key, path, importComponent, useTitle, children);
   }
 

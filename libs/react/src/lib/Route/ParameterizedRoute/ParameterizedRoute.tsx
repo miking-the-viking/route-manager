@@ -3,6 +3,15 @@ import ImportComponentFunc from '../../types/ImportComponentFunc';
 import UseTitle from '../../types/UseTitle';
 import AbstractRoute from '../AbstractRoute/AbstractRoute';
 
+type ParameterizedRouteProps<Key extends string, ParamKeys extends string> = {
+  key: Key;
+  path: DynamicParamPath<ParamKeys>;
+  params: Record<ParamKeys, string>;
+  importComponent: ImportComponentFunc;
+  useTitle: UseTitle;
+  children?: AbstractRoute<Key, DynamicParamPath<ParamKeys>>[];
+};
+
 /**
  * A ParameterizedRoute is requires parameters, leading to a dynamic path string literal, like `users/:id` or `:company/users/:id`
  *
@@ -30,14 +39,7 @@ export class ParameterizedRoute<
     importComponent,
     useTitle,
     children,
-  }: {
-    key: Key;
-    path: DynamicParamPath<ParamKeys>;
-    params: Record<ParamKeys, string>;
-    importComponent: ImportComponentFunc;
-    useTitle: UseTitle;
-    children?: AbstractRoute<Key, DynamicParamPath<ParamKeys>>[];
-  }) {
+  }: ParameterizedRouteProps<Key, ParamKeys>) {
     return new ParameterizedRoute<Key, ParamKeys>(
       key,
       path,

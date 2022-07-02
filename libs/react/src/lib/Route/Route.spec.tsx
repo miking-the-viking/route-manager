@@ -93,4 +93,8 @@ describe('Route class', () => {
       'Wraps the default exprt of the importComponent in a RouteWrapper connecting the Route and Compoment'
     );
   });
+
+  describe('rules', () => {
+    it.todo('test');
+  });
 });

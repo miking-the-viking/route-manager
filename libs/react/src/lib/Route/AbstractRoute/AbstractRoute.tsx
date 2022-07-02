@@ -1,5 +1,6 @@
 import { lazy, Suspense } from 'react';
 import RouteWrapper from '../../components/RouteWrapper/RouteWrapper';
+import ConstructorTypeWithCreate from '../../types/ConstructorTypeWithCreate';
 import ImportComponentFunc from '../../types/ImportComponentFunc';
 import UseTitle from '../../types/UseTitle';
 

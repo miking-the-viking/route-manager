@@ -7,37 +7,39 @@ class Route {
   static create = StaticOrParameterizedRoute.create;
 }
 
-const FAKE_IMPORT_COMPONENT = () =>
-  Promise.resolve({ default: () => <p>test</p> });
+// SCRATCH BELOW
 
-const SHARED = {
-  importComponent: FAKE_IMPORT_COMPONENT,
-  useTitle: () => 'computed page title',
-};
+// const FAKE_IMPORT_COMPONENT = () =>
+//   Promise.resolve({ default: () => <p>test</p> });
 
-// Allows for static route with `*` path
-Route.create({
-  ...SHARED,
-  key: 'static *',
-  path: '*',
-});
+// const SHARED = {
+//   importComponent: FAKE_IMPORT_COMPONENT,
+//   useTitle: () => 'computed page title',
+// };
 
-// Allows for static route with `string` path
-Route.create({
-  ...SHARED,
-  key: 'static string',
-  path: 'scooby-dooby/doo',
-});
+// // Allows for static route with `*` path
+// Route.create({
+//   ...SHARED,
+//   key: 'static *',
+//   path: '*',
+// });
 
-// Allows for type-safe, parameterized `path` string literal using optionally defined `params`
-Route.create({
-  ...SHARED,
-  key: 'parameterized route',
-  params: {
-    param1: 'test',
-  },
-  path: ':param1',
-});
+// // Allows for static route with `string` path
+// Route.create({
+//   ...SHARED,
+//   key: 'static string',
+//   path: 'scooby-dooby/doo',
+// });
+
+// // Allows for type-safe, parameterized `path` string literal using optionally defined `params`
+// Route.create({
+//   ...SHARED,
+//   key: 'parameterized route',
+//   params: {
+//     param1: 'test',
+//   },
+//   path: ':param1',
+// });
 
 // Error if missing defined parameters in path,
 // Route.create({
