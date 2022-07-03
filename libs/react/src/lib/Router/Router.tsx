@@ -1,12 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { PropsWithChildren, useRef } from 'react';
+import { PropsWithChildren, useContext, useRef } from 'react';
 import { useInRouterContext } from 'react-router-dom';
 import BrowserProvider from '../components/BrowserProvider/BrowserProvider';
 import IndexRouter from '../components/IndexRouter/IndexRouter';
 import SafeLink from '../components/SafeLink/SafeLink';
+import RouteManagerContext from '../contexts/RouteManagerContext/RouteManagerContext';
 import RouteManagerContextProvider from '../contexts/RouteManagerContext/RouteManagerContextProvider';
+import { RouteManagerState } from '../contexts/RouteManagerContext/RouteManagerState';
 import ParameterizedRoute from '../Route/ParameterizedRoute/ParameterizedRoute';
-import Route from '../Route/Route';
 import StaticRoute from '../Route/StaticRoute/StaticRoute';
 
 type KeyOfRoutes<
@@ -103,6 +104,15 @@ class Router<
     this.Link = SafeLink;
   }
 
+  public useRouterContext() {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    return useContext(
+      RouteManagerContext as any as React.Context<
+        RouteManagerState<Key, AppState, ParamKeys>
+      >
+    );
+  }
+
   /**
    * `generate` is used for an applications router file.
    * Use this to generate type-safe router methods based on the application routes
@@ -114,6 +124,7 @@ class Router<
   >({
     routes,
     Layout,
+    useState,
   }: {
     /**
      * Routes are an array of Static and Parameterized routes
@@ -123,6 +134,7 @@ class Router<
       | ParameterizedRoute<Key, ParamKeys, State>
     )[];
     Layout?: React.FC<PropsWithChildren>;
+    useState: () => State;
   }) {
     return new Router(routes, Layout);
   }
@@ -157,40 +169,43 @@ export default Router;
 //
 //
 
-const BASE_ROUTE = {
-  importComponent: () => Promise.resolve({ default: () => <p>test</p> }),
-  useTitle() {
-    return 'computed title from hook';
-  },
-} as const;
-const ROUTE_1 = Route.create({
-  ...BASE_ROUTE,
-  key: 'route 1 key',
-  path: '*',
-});
-const ROUTE_2 = Route.create({
-  ...BASE_ROUTE,
-  key: 'route 2 key',
-  path: 'route 2',
-  children: [ROUTE_1],
-});
-const ROUTE_3 = Route.create({
-  ...BASE_ROUTE,
-  key: 'route 3 key',
-  path: ':param1/:param2', // must include both :param1 and :param2
-  params: {
-    param1: 'test',
-    param2: 'other test',
-  },
-});
+// const BASE_ROUTE = {
+//   importComponent: () => Promise.resolve({ default: () => <p>test</p> }),
+//   useTitle() {
+//     return 'computed title from hook';
+//   },
+// } as const;
+// const ROUTE_1 = Route.create({
+//   ...BASE_ROUTE,
+//   key: 'route 1 key',
+//   path: '*',
+// });
+// const ROUTE_2 = Route.create({
+//   ...BASE_ROUTE,
+//   key: 'route 2 key',
+//   path: 'route 2',
+//   children: [ROUTE_1],
+// });
+// const ROUTE_3 = Route.create({
+//   ...BASE_ROUTE,
+//   key: 'route 3 key',
+//   path: ':param1/:param2', // must include both :param1 and :param2
+//   params: {
+//     param1: 'test',
+//     param2: 'other test',
+//   },
+// });
 
-const { Link } = Router.generate({
-  routes: [ROUTE_1, ROUTE_2, ROUTE_3],
-});
+// const { Link } = Router.generate({
+//   routes: [ROUTE_1, ROUTE_2, ROUTE_3],
+//   useState() {
+//     return {};
+//   },
+// });
 
-const SomeThingWithTypesafeLink = () => (
-  <>
-    <Link to="route 3 key" />
-    <Link to="route 1 key" />
-  </>
-);
+// const SomeThingWithTypesafeLink = () => (
+//   <>
+//     <Link to="route 3 key" />
+//     <Link to="route 1 key" />
+//   </>
+// );

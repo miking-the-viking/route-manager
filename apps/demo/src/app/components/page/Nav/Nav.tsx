@@ -1,6 +1,8 @@
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
+import useRouteManagerContext from '../../../../../../../libs/react/src/lib/contexts/RouteManagerContext/hooks/useRouteManagerContext';
 import { COLORS } from '../../../context/Favourites/Color';
+import router from '../../../router';
 
 const Bar = styled.div`
     flex: 1;
@@ -14,9 +16,12 @@ const Nav: React.FC = () => {
     <Bar>
       {COLORS.map((col) => {
         return (
-          <Link key={col} to={`/club/color/${col}`}>
+          // <Link key={col} to={`/club/color/${col}`}>
+          //   {col}
+          // </Link>
+          <router.Link key={col} to={'Colorr Club'}>
             {col}
-          </Link>
+          </router.Link>
         );
       })}
     </Bar>

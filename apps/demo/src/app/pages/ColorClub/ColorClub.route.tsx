@@ -4,7 +4,7 @@ import useFavouriteColor from '../../context/Favourites/hooks/useFavouriteColor'
 import COLOR_FANS_ROUTE from './ColorFans/ColorFans.route';
 
 const COLOR_CLUB_ROUTE = Route.create({
-  key: 'Color Club',
+  key: 'Colorr Club',
   path: '/club/color/:color',
   useTitle() {
     const { color } = useParams();
