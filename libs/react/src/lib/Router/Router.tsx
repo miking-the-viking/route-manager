@@ -1,5 +1,5 @@
 import { State } from 'history';
-import { Key, PropsWithChildren } from 'react';
+import { Key, PropsWithChildren, ReactElement } from 'react';
 import SafeLink from '../components/SafeLink/SafeLink';
 import ParameterizedRoute from '../Route/ParameterizedRoute/ParameterizedRoute';
 import Route from '../Route/Route';
@@ -9,6 +9,12 @@ type KeyOfRoutes<
   Key extends string,
   AppState extends Record<string, any>
 > = StaticRoute<Key, AppState>['key'];
+
+export type RouterProps<
+  Key extends string,
+  State extends Record<string, any>,
+  Params extends string
+> = Parameters<typeof Router<Key, State, Params>['generate']>[number];
 
 class Router<
   Key extends string,
@@ -28,7 +34,7 @@ class Router<
       | StaticRoute<Key, AppState>
       | ParameterizedRoute<Key, ParamKeys, AppState>
     )[],
-    public readonly Layout?: (props: PropsWithChildren) => JSX.Element
+    public readonly Layout?: React.FC
   ) {
     this.Link = SafeLink;
   }
@@ -52,17 +58,11 @@ class Router<
       | StaticRoute<Key, State>
       | ParameterizedRoute<Key, ParamKeys, State>
     )[];
-    Layout?: (props: PropsWithChildren) => JSX.Element;
+    Layout?: React.FC<PropsWithChildren>;
   }) {
     return new Router(routes, Layout);
   }
 }
-
-export type RouterProps<
-  Key extends string,
-  State extends Record<string, any>,
-  Params extends string
-> = Parameters<typeof Router<Key, State, Params>['generate']>[number];
 
 export default Router;
 

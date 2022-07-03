@@ -1,5 +1,7 @@
 import { Helmet } from 'react-helmet-async';
+import ParameterizedRoute from '../../Route/ParameterizedRoute/ParameterizedRoute';
 import Route from '../../Route/Route';
+import StaticRoute from '../../Route/StaticRoute/StaticRoute';
 import useRedirectCheck from './hooks/useRedirectCheck';
 
 /**
@@ -9,8 +11,12 @@ import useRedirectCheck from './hooks/useRedirectCheck';
  *
  */
 const RouteWrapper =
-  <Key extends string, State extends Record<string, any>>(
-    route: Route<Key, State>,
+  <
+    Key extends string,
+    State extends Record<string, any>,
+    ParamKeys extends string
+  >(
+    route: StaticRoute<Key, State> | ParameterizedRoute<Key, ParamKeys, State>,
     Component: any
   ) =>
   () => {

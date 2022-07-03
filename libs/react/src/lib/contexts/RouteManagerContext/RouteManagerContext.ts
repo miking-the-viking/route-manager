@@ -1,8 +1,9 @@
 import React from 'react';
 import { RouteManagerState } from './RouteManagerState';
 
+// TODO: May need to generate this so that we can use the generics for
 const RouteManagerContext = React.createContext<
-  RouteManagerState<any, Record<string, any>>
+  RouteManagerState<string, Record<string, any>, string>
 >({
   state: {},
   routes: [],

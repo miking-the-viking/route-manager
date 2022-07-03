@@ -61,11 +61,10 @@ abstract class AbstractRoute<
   private static lazyElement<
     Key extends string,
     Path,
-    State extends Record<string, any>
-  >(
-    importComponent: ImportComponentFunc,
-    route: AbstractRoute<Key, Path, State>
-  ) {
+    State extends Record<string, any>,
+    ParamKeys extends string,
+    RouteImplementation extends AbstractRoute<Key, Path, State>
+  >(importComponent: ImportComponentFunc, route: RouteImplementation) {
     // setup the `element` property using the `importComponent` method
     // this will be a lazily loaded component and will simultaneously provide
     // an entry point for evaluating redirection rules
@@ -73,7 +72,10 @@ abstract class AbstractRoute<
       const Component = await importComponent();
       return {
         // TODO: RouteWrapper uses State
-        default: RouteWrapper<Key, Path>(route, Component.default),
+        default: RouteWrapper<Key, Path, ParamKeys>(
+          route as any, // TODO: Can this cast be removed?
+          Component.default
+        ),
       };
     });
     return (

@@ -1,8 +1,10 @@
-import Route from '../../Route/Route';
+import ParameterizedRoute from '../../Route/ParameterizedRoute/ParameterizedRoute';
+import StaticRoute from '../../Route/StaticRoute/StaticRoute';
 
 export interface RouteManagerState<
   Key extends string,
-  RouterState extends Record<string, any>
+  RouterState extends Record<string, any>,
+  ParamKeys extends string
 > {
   /**
    * Application state used for route generation and rule evaluation
@@ -11,14 +13,21 @@ export interface RouteManagerState<
   /**
    * All known routes in the application
    */
-  routes: Route<Key, RouterState>[];
+  routes: Array<
+    | StaticRoute<Key, RouterState>
+    | ParameterizedRoute<Key, ParamKeys, RouterState>
+  >;
 
   /**
    * Check if route is accessible
    *
    * Returns true if the route can be accessed, false otherwise
    */
-  checkRoute: (route: Route<Key, RouterState>) => boolean;
+  checkRoute: (
+    route:
+      | StaticRoute<Key, RouterState>
+      | ParameterizedRoute<Key, ParamKeys, RouterState>
+  ) => boolean;
 
   // redirectCheck: (route: Route<RouterState>, params: Record<string, any>) => void;
 

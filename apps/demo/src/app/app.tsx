@@ -20,13 +20,13 @@ function App() {
   const router = useRouter({
     routes: ROUTES,
     Layout,
-    useState() {
-      console.log('App-defined useState');
-      const favouriteColor = useFavouriteColor();
-      return {
-        color: favouriteColor,
-      };
-    },
+    // useState() {
+    //   console.log('App-defined useState');
+    //   const favouriteColor = useFavouriteColor();
+    //   return {
+    //     color: favouriteColor,
+    //   };
+    // },
   });
 
   return (

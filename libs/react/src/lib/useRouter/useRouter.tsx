@@ -16,7 +16,10 @@ function setupRouterWrappers<
   State extends Record<string, any>,
   Params extends string
 >(
-  { routes, Layout, useState }: RouterProps<Key, State, Params>,
+  {
+    routes,
+    Layout, //useState
+  }: RouterProps<Key, State, Params>,
   ref: React.MutableRefObject<JSX.Element | null>,
   inRouterAlready: boolean
 ) {
@@ -33,7 +36,7 @@ function setupRouterWrappers<
 
   // Setup the RouteManagerContext, accessible by the Layout wrapper
   const wrappedInRouteManagerContext = (
-    <RouteManagerContextProvider<Key, State>
+    <RouteManagerContextProvider<Key, State, Params>
       useState={useState}
       routes={routes}
     >

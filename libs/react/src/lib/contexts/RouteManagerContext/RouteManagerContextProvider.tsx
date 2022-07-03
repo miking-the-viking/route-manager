@@ -1,6 +1,7 @@
-import { PropsWithChildren, useCallback, useContext } from 'react';
+import { PropsWithChildren, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
-import Route from '../../Route/Route';
+import ParameterizedRoute from '../../Route/ParameterizedRoute/ParameterizedRoute';
+import StaticRoute from '../../Route/StaticRoute/StaticRoute';
 import evaluate from '../../Rule/evaluate';
 
 import RouteManagerContext from './RouteManagerContext';
@@ -8,28 +9,35 @@ import { RouteManagerState } from './RouteManagerState';
 
 type RouteManagerContextProviderProps<
   Key extends string,
-  State extends Record<string, any>
+  State extends Record<string, any>,
+  ParamKeys extends string
 > = {
   // useState: State | (() => State); // TODO: Will a function be better?
   useState: () => State;
-  routes: Route<Key, State>[];
+  routes: (
+    | StaticRoute<Key, State>
+    | ParameterizedRoute<Key, ParamKeys, State>
+  )[];
 } & PropsWithChildren;
 
 const RouteManagerContextProvider = <
   Key extends string,
-  State extends Record<string, any>
+  State extends Record<string, any>,
+  ParamKeys extends string
 >({
   children,
   useState,
   routes,
-}: RouteManagerContextProviderProps<Key, State>) => {
+}: RouteManagerContextProviderProps<Key, State, ParamKeys>) => {
   console.log('RouteManagerContextProvider');
 
   const state = useState();
 
   const params = useParams();
   const checkRoute = useCallback(
-    (route: Route<Key, State>) => {
+    (
+      route: StaticRoute<Key, State> | ParameterizedRoute<Key, ParamKeys, State>
+    ) => {
       console.log('checkRoute', route, params, state);
 
       // if route does not have rules, they can access it
@@ -48,7 +56,7 @@ const RouteManagerContextProvider = <
 
   // Type safety to the RouteManagerContext, for convenience
   const AppStateTypedRouteManagerContext = RouteManagerContext as React.Context<
-    RouteManagerState<Key, State>
+    RouteManagerState<Key, State, ParamKeys>
   >;
 
   return (
