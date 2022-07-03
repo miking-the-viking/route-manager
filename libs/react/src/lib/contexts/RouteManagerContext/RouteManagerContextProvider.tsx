@@ -55,9 +55,10 @@ const RouteManagerContextProvider = <
   );
 
   // Type safety to the RouteManagerContext, for convenience
-  const AppStateTypedRouteManagerContext = RouteManagerContext as React.Context<
-    RouteManagerState<Key, State, ParamKeys>
-  >;
+  const AppStateTypedRouteManagerContext =
+    RouteManagerContext as any as React.Context<
+      RouteManagerState<Key, State, ParamKeys>
+    >;
 
   return (
     <AppStateTypedRouteManagerContext.Provider

@@ -8,7 +8,6 @@ class Route {
 }
 
 // SCRATCH BELOW
-
 // const FAKE_IMPORT_COMPONENT = () =>
 //   Promise.resolve({ default: () => <p>test</p> });
 

@@ -1,4 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { lazy, Suspense } from 'react';
+import { RouteObject } from 'react-router-dom';
 import RouteWrapper from '../../components/RouteWrapper/RouteWrapper';
 import ConstructorTypeWithCreate from '../../types/ConstructorTypeWithCreate';
 import ImportComponentFunc from '../../types/ImportComponentFunc';
@@ -48,7 +50,7 @@ abstract class AbstractRoute<
   ) {
     this.element = AbstractRoute<Key, Path, State>.lazyElement(
       importComponent,
-      this
+      this as any as AbstractRoute<Key, string, State>
     );
   }
 
@@ -60,7 +62,7 @@ abstract class AbstractRoute<
    */
   private static lazyElement<
     Key extends string,
-    Path,
+    Path extends string,
     State extends Record<string, any>,
     ParamKeys extends string,
     RouteImplementation extends AbstractRoute<Key, Path, State>
@@ -72,7 +74,7 @@ abstract class AbstractRoute<
       const Component = await importComponent();
       return {
         // TODO: RouteWrapper uses State
-        default: RouteWrapper<Key, Path, ParamKeys>(
+        default: RouteWrapper<Key, Path, State, ParamKeys>(
           route as any, // TODO: Can this cast be removed?
           Component.default
         ),

@@ -1,6 +1,10 @@
-import { State } from 'history';
-import { Key, PropsWithChildren, ReactElement } from 'react';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { PropsWithChildren, useRef } from 'react';
+import { useInRouterContext } from 'react-router-dom';
+import BrowserProvider from '../components/BrowserProvider/BrowserProvider';
+import IndexRouter from '../components/IndexRouter/IndexRouter';
 import SafeLink from '../components/SafeLink/SafeLink';
+import RouteManagerContextProvider from '../contexts/RouteManagerContext/RouteManagerContextProvider';
 import ParameterizedRoute from '../Route/ParameterizedRoute/ParameterizedRoute';
 import Route from '../Route/Route';
 import StaticRoute from '../Route/StaticRoute/StaticRoute';
@@ -15,6 +19,66 @@ export type RouterProps<
   State extends Record<string, any>,
   Params extends string
 > = Parameters<typeof Router<Key, State, Params>['generate']>[number];
+
+/**
+ * Wrap the router in
+ *  - Route Manager Context
+ *  - Conditional BrowserProvider
+ *  - Conditional Layout prop (for reusable application layout or route-driven components live Nav)
+ */
+function setupRouterWrappers<
+  Key extends string,
+  State extends Record<string, any>,
+  Params extends string
+>(
+  {
+    routes,
+    Layout, //useState
+  }: RouterProps<Key, State, Params>,
+  ref: React.MutableRefObject<JSX.Element | null>,
+  inRouterAlready: boolean
+) {
+  if (ref.current) return;
+
+  const router = (
+    <IndexRouter
+      {...{
+        routes: routes as any, //TODO: Fix cast, for some reasaon DynamicPaaramaRoute is potentially unknown???
+      }}
+    />
+  );
+
+  // If a Layout has been defined for state or style, then wrap the router in it.
+  const conditionallyWrappedInLayoutRouter = Layout ? (
+    <Layout>{router}</Layout>
+  ) : (
+    router
+  );
+
+  // Setup the RouteManagerContext, accessible by the Layout wrapper
+  const wrappedInRouteManagerContext = (
+    <RouteManagerContextProvider<Key, State, Params>
+      useState={() => {
+        // TODO: Real state
+        return {} as State;
+      }}
+      routes={
+        routes as any // TODO: Fix cast
+      }
+    >
+      {conditionallyWrappedInLayoutRouter}
+    </RouteManagerContextProvider>
+  );
+
+  // If necessary, wrap the router in the BrowserProvider
+  if (inRouterAlready) {
+    ref.current = wrappedInRouteManagerContext;
+  } else {
+    ref.current = (
+      <BrowserProvider>{wrappedInRouteManagerContext}</BrowserProvider>
+    );
+  }
+}
 
 class Router<
   Key extends string,
@@ -34,7 +98,7 @@ class Router<
       | StaticRoute<Key, AppState>
       | ParameterizedRoute<Key, ParamKeys, AppState>
     )[],
-    public readonly Layout?: React.FC
+    public readonly Layout?: React.FC<PropsWithChildren>
   ) {
     this.Link = SafeLink;
   }
@@ -62,9 +126,36 @@ class Router<
   }) {
     return new Router(routes, Layout);
   }
+
+  /**
+   * Router Component to be used in the application
+   */
+  public Component = () => {
+    // const router = useRoutes(this.routes as RouteObject[]);
+    // We don't want to keep rerendering the router, so will use a ref
+    const wrappedOrUnwrappedRouter = useRef<JSX.Element | null>(null);
+    const inRouterAlready = useInRouterContext();
+
+    setupRouterWrappers(
+      this as any, // TODO: Fix cast, DynamicParamRoute with unknown from Path
+      wrappedOrUnwrappedRouter,
+      inRouterAlready
+    );
+
+    return wrappedOrUnwrappedRouter.current ?? <p>Loading</p>;
+  };
 }
 
 export default Router;
+
+//
+//
+//
+//
+//
+//
+//
+//
 
 const BASE_ROUTE = {
   importComponent: () => Promise.resolve({ default: () => <p>test</p> }),

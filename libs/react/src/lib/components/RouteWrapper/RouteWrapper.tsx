@@ -13,6 +13,7 @@ import useRedirectCheck from './hooks/useRedirectCheck';
 const RouteWrapper =
   <
     Key extends string,
+    Path extends string,
     State extends Record<string, any>,
     ParamKeys extends string
   >(

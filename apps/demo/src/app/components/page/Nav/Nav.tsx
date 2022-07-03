@@ -8,6 +8,8 @@ const Bar = styled.div`
 `;
 
 const Nav: React.FC = () => {
+  // TODO: Use type-safe Link from Router
+
   return (
     <Bar>
       {COLORS.map((col) => {

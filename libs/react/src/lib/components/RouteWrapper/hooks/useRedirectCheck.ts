@@ -25,7 +25,7 @@ function useRedirectCheck<
   console.log('state', state);
 
   useEffect(() => {
-    checkRoute(route);
+    checkRoute(route as any);
   }, [checkRoute, route]);
 
   return null;
