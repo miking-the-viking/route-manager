@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+// import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import useRouteManagerContext from '../../../../../../../libs/react/src/lib/contexts/RouteManagerContext/hooks/useRouteManagerContext';
 import { COLORS } from '../../../context/Favourites/Color';
@@ -11,6 +11,7 @@ const Bar = styled.div`
 
 const Nav: React.FC = () => {
   // TODO: Use type-safe Link from Router
+  const { Link } = router;
 
   return (
     <Bar>
@@ -19,9 +20,9 @@ const Nav: React.FC = () => {
           // <Link key={col} to={`/club/color/${col}`}>
           //   {col}
           // </Link>
-          <router.Link key={col} to={'Colorr Club'}>
+          <Link key={col} to={'Colorr Club'}>
             {col}
-          </router.Link>
+          </Link>
         );
       })}
     </Bar>

@@ -2,16 +2,20 @@ import ConstructorTypeWithCreate from '../../types/ConstructorTypeWithCreate';
 import ImportComponentFunc from '../../types/ImportComponentFunc';
 import UseTitle from '../../types/UseTitle';
 import AbstractRoute from '../AbstractRoute/AbstractRoute';
+import ParameterizedRoute from '../ParameterizedRoute/ParameterizedRoute';
 
-type StaticRouteProps<
+export type StaticRouteProps<
   Key extends string,
-  Path extends string,
   State extends Record<string, any>
+  // ParamKeys extends string
 > = {
   key: Key;
   path: string;
   importComponent: ImportComponentFunc;
-  children?: AbstractRoute<Key, Path, State>[];
+  children?: (
+    | StaticRoute<Key, State>
+    | ParameterizedRoute<Key, string, State>
+  )[];
   useTitle: UseTitle;
   rules?: Array<ConstructorTypeWithCreate<State>>;
 };
@@ -23,33 +27,29 @@ type StaticRouteProps<
 class StaticRoute<
   Key extends string,
   State extends Record<string, any>
-> extends AbstractRoute<Key, string, State> {
+> extends AbstractRoute<Key, string, State, StaticRoute<Key, State>> {
   constructor(
     key: Key,
     path: string,
     importComponent: ImportComponentFunc,
     useTitle: UseTitle,
-    children?: AbstractRoute<Key, string, State>[],
+    children?: AbstractRoute<Key, string, State, StaticRoute<Key, State>>[],
     rules?: Array<ConstructorTypeWithCreate<State>>
   ) {
     super(key, path, importComponent, useTitle, children, rules);
   }
 
   /**
-   * Create a
+   * Create a StaticRoute
    */
-  static create<
-    Key extends string,
-    Path extends string,
-    State extends Record<string, any>
-  >({
+  static create<Key extends string, State extends Record<string, any>>({
     key,
     path,
     importComponent,
     children,
     useTitle,
     rules,
-  }: StaticRouteProps<Key, Path, State>) {
+  }: StaticRouteProps<Key, State>) {
     return new StaticRoute<Key, State>(
       key,
       path,

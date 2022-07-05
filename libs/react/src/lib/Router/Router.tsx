@@ -8,6 +8,7 @@ import RouteManagerContext from '../contexts/RouteManagerContext/RouteManagerCon
 import RouteManagerContextProvider from '../contexts/RouteManagerContext/RouteManagerContextProvider';
 import { RouteManagerState } from '../contexts/RouteManagerContext/RouteManagerState';
 import ParameterizedRoute from '../Route/ParameterizedRoute/ParameterizedRoute';
+import Route from '../Route/Route';
 import StaticRoute from '../Route/StaticRoute/StaticRoute';
 
 type KeyOfRoutes<
@@ -169,43 +170,43 @@ export default Router;
 //
 //
 
-// const BASE_ROUTE = {
-//   importComponent: () => Promise.resolve({ default: () => <p>test</p> }),
-//   useTitle() {
-//     return 'computed title from hook';
-//   },
-// } as const;
-// const ROUTE_1 = Route.create({
-//   ...BASE_ROUTE,
-//   key: 'route 1 key',
-//   path: '*',
-// });
-// const ROUTE_2 = Route.create({
-//   ...BASE_ROUTE,
-//   key: 'route 2 key',
-//   path: 'route 2',
-//   children: [ROUTE_1],
-// });
-// const ROUTE_3 = Route.create({
-//   ...BASE_ROUTE,
-//   key: 'route 3 key',
-//   path: ':param1/:param2', // must include both :param1 and :param2
-//   params: {
-//     param1: 'test',
-//     param2: 'other test',
-//   },
-// });
+const BASE_ROUTE = {
+  importComponent: () => Promise.resolve({ default: () => <p>test</p> }),
+  useTitle() {
+    return 'computed title from hook';
+  },
+} as const;
+const ROUTE_1 = Route.create({
+  ...BASE_ROUTE,
+  key: 'route 1 key',
+  path: '*',
+});
+const ROUTE_2 = Route.create({
+  ...BASE_ROUTE,
+  key: 'route 2 key',
+  path: 'route 2',
+  children: [ROUTE_1],
+});
+const ROUTE_3 = Route.create({
+  ...BASE_ROUTE,
+  key: 'route 3 key',
+  path: ':param1/:param2', // must include both :param1 and :param2
+  params: {
+    param1: 'test',
+    param2: 'other test',
+  },
+});
 
-// const { Link } = Router.generate({
-//   routes: [ROUTE_1, ROUTE_2, ROUTE_3],
-//   useState() {
-//     return {};
-//   },
-// });
+const { Link } = Router.generate({
+  routes: [ROUTE_2, ROUTE_3],
+  useState() {
+    return {};
+  },
+});
 
-// const SomeThingWithTypesafeLink = () => (
-//   <>
-//     <Link to="route 3 key" />
-//     <Link to="route 1 key" />
-//   </>
-// );
+const SomeThingWithTypesafeLink = () => (
+  <>
+    <Link to="route 3 key" />
+    <Link to="route 1 key" />
+  </>
+);

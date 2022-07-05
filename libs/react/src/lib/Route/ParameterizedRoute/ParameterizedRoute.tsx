@@ -3,8 +3,9 @@ import DynamicParamPath from '../../types/DynamicParamPath';
 import ImportComponentFunc from '../../types/ImportComponentFunc';
 import UseTitle from '../../types/UseTitle';
 import AbstractRoute from '../AbstractRoute/AbstractRoute';
+import StaticRoute from '../StaticRoute/StaticRoute';
 
-type ParameterizedRouteProps<
+export type ParameterizedRouteProps<
   Key extends string,
   ParamKeys extends string,
   State extends Record<string, any>
@@ -14,7 +15,10 @@ type ParameterizedRouteProps<
   params: Record<ParamKeys, string>;
   importComponent: ImportComponentFunc;
   useTitle: UseTitle;
-  children?: AbstractRoute<Key, DynamicParamPath<ParamKeys>, State>[];
+  children?: (
+    | ParameterizedRoute<Key, ParamKeys, State>
+    | StaticRoute<Key, State>
+  )[];
   rules?: Array<ConstructorTypeWithCreate<State>>;
 };
 
@@ -28,17 +32,25 @@ export class ParameterizedRoute<
   Key extends string,
   ParamKeys extends string,
   State extends Record<string, any>
-> extends AbstractRoute<Key, DynamicParamPath<ParamKeys>, State> {
+> extends AbstractRoute<
+  Key,
+  DynamicParamPath<ParamKeys>,
+  State,
+  ParameterizedRoute<Key, ParamKeys, State>
+> {
   constructor(
     key: Key,
     public override readonly path: DynamicParamPath<ParamKeys>,
     public readonly params: Record<ParamKeys, string>,
     importComponent: ImportComponentFunc,
     useTitle: UseTitle,
-    children?: AbstractRoute<Key, DynamicParamPath<ParamKeys>, State>[],
+    children?: (
+      | ParameterizedRoute<Key, ParamKeys, State>
+      | StaticRoute<Key, State>
+    )[],
     rules?: Array<ConstructorTypeWithCreate<State>>
   ) {
-    super(key, path, importComponent, useTitle, children, rules);
+    super(key, path, importComponent, useTitle, children as any, rules);
   }
   static create<
     Key extends string,

@@ -15,7 +15,8 @@ import UseTitle from '../../types/UseTitle';
 abstract class AbstractRoute<
   Key extends string,
   Path,
-  State extends Record<string, any>
+  State extends Record<string, any>,
+  RouteTypes extends AbstractRoute<Key, Path, State, RouteTypes>
 > {
   /**
    * React Router `element`, the JSX Element that will be rendered by this route
@@ -42,15 +43,16 @@ abstract class AbstractRoute<
     /**
      * The Route's optional `children`
      */
-    public readonly children?: AbstractRoute<Key, Path, State>[],
+    public readonly children?: RouteTypes[],
+    // public readonly children?: AbstractRoute<Key, Path, State>[],
     /**
      * The Route's optional rules
      */
     public readonly rules?: Array<ConstructorTypeWithCreate<State>>
   ) {
-    this.element = AbstractRoute<Key, Path, State>.lazyElement(
+    this.element = AbstractRoute<Key, Path, State, RouteTypes>.lazyElement(
       importComponent,
-      this as any as AbstractRoute<Key, string, State>
+      this as any // TODO: Fix Cast
     );
   }
 
@@ -65,7 +67,12 @@ abstract class AbstractRoute<
     Path extends string,
     State extends Record<string, any>,
     ParamKeys extends string,
-    RouteImplementation extends AbstractRoute<Key, Path, State>
+    RouteImplementation extends AbstractRoute<
+      Key,
+      Path,
+      State,
+      RouteImplementation
+    >
   >(importComponent: ImportComponentFunc, route: RouteImplementation) {
     // setup the `element` property using the `importComponent` method
     // this will be a lazily loaded component and will simultaneously provide
