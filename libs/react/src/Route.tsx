@@ -3,7 +3,7 @@ import { lazy } from 'react';
 import AsyncComponent from './AsyncComponent';
 import RouteComponentWrapper from './RouteComponentWrapper';
 
-export type RouteInput = {
+export type RouteInput<N extends string, P extends string> = {
   /**
    * Distinct key for this route which can be used anywhere in the application as distinct identifier
    *
@@ -19,12 +19,12 @@ export type RouteInput = {
   /**
    * The relative url path that router should match to
    */
-  path: string;
+  path: P;
 
   /**
    * The name of the route
    */
-  name: string;
+  name: N;
   /**
    * Function which imports the component.
    *
@@ -46,30 +46,30 @@ export type RouteInput = {
   /**
    * If the route has nested children, they will be defined here
    */
-  children?: Route[];
+  children?: Route<N, P>[];
 };
 
-class Route {
+class Route<N extends string, P extends string> {
   public readonly key: symbol;
-  public readonly path: string;
-  public readonly name: string;
+  public readonly path: P;
+  public readonly name: N;
   public readonly element: JSX.Element;
   public readonly default: boolean;
-  public readonly children?: Route[];
+  public readonly children?: Route<N, P>[];
 
   /**
    * A Static route is one that does not contain any dynamic slugs, may still be a descendant of a dynamic slug route.
    */
-  static Static<RouterState extends Record<string, any>>(
-    routeProps: RouteInput
+  static Static<RouterState extends Record<string, any>, N extends string, P extends string>(
+    routeProps: RouteInput<N, P>
   ) {
-    return new Route(routeProps);
+    return new Route<N, P>(routeProps);
   }
 
-  static Dynamic<RouterState extends Record<string, any>>(
-    routeProps: RouteInput
+  static Dynamic<RouterState extends Record<string, any>, N extends string, P extends string>(
+    routeProps: RouteInput<N, P>
   ) {
-    return new Route(routeProps);
+    return new Route<N, P>(routeProps);
   }
 
   constructor({
@@ -79,7 +79,7 @@ class Route {
     importComponent: componentImportFunction,
     default: defaultInput = false,
     children,
-  }: RouteInput) {
+  }: RouteInput<N, P>) {
     this.key = key;
     this.path = path;
     this.name = name;

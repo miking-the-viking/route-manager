@@ -1,3 +1,4 @@
+import { createRouter } from '@route-manager/react';
 import React from 'react';
 import { Navigate, RouteObject } from 'react-router';
 import About from './pages/About/About';
@@ -26,5 +27,14 @@ const routes = [
   //     element: <Navigate to={'/welcome'} />,
   //   },
 ];
+
+
+/**
+ * Intellisense will be like 
+  const Link: React.FC<LinkProps & React.RefAttributes<HTMLAnchorElement> & {
+    to: "Welcome" | "About" | "Something";
+  }>
+ */
+export const { Link } = createRouter([WELCOME_ROUTE, ABOUT_ROUTE]);
 
 export default routes;
