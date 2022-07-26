@@ -178,11 +178,14 @@ type ParameterizedOfAll<K extends string, P extends string> = (
 ) extends (x: infer I) => void
   ? I
   : never;
+type NonParameterizedOfAll<K extends string> = (
+  EitherOfAll extends any ? (x: Keyed<K>) => void : never
+) extends (x: infer I) => void
+  ? I
+  : never;
 
 function takesOneOfAll<K extends EitherOfAll['key'], P extends string>(
-  ofAll: Extract<EitherOfAll, ParameterizedOfAll<K, P>> &
-    ParameterizedKeyed<K, P>
-  // ofAll: Extract<EitherOfAll, ParameterizedOfAll<K, P>>
+  ofAll: Extract<EitherOfAll, ParameterizedOfAll<K, P>>
 ): ParameterizedOfAll<K, P>;
 function takesOneOfAll<K extends EitherOfAll['key']>(
   ofAll: EitherOfAll & Keyed<K>
@@ -196,11 +199,14 @@ function takesOneOfAll(ofAll: EitherOfAll) {
 // PRO: right type: const testOneOfAllKeyed: Keyed<"keyed">,
 const testOneOfAllKeyed = takesOneOfAll({
   key: 'keyed',
+  // key: 'keyed',
+  // key: keyed.key,
 });
 
 // PRO: compilation error when adding params to keyed only
 const testOfAllExtraParams = takesOneOfAll({
-  key: 'keyed',
+  key: keyed.key,
+  // key: 'key',
   params: {
     // should scream here
     paramA: 'test',
@@ -224,8 +230,3 @@ const testOfAll2 = takesOneOfAll({
     'mikes-param': 'test',
   },
 });
-
-//
-// PROBLEM: union of objects that I want intersected
-//
-//
