@@ -82,6 +82,12 @@ function setupRouterWrappers<
   }
 }
 
+type ParamOfRoutes<
+  Key extends string,
+  AppState extends Record<string, any>,
+  ParamKeys extends string
+> = ParameterizedRoute<Key, ParamKeys, AppState>['params'];
+
 class Router<
   Key extends string,
   AppState extends Record<string, any>,
@@ -90,7 +96,10 @@ class Router<
   /**
    * Typesafe Link component for use in the Application that will autosuggest `to` and `props` (hopefully)
    */
-  public readonly Link: typeof SafeLink<KeyOfRoutes<Key, AppState>>;
+  public readonly Link: typeof SafeLink<
+    KeyOfRoutes<Key, AppState>,
+    Record<ParamKeys, any>
+  >;
 
   constructor(
     /**
@@ -176,29 +185,37 @@ const BASE_ROUTE = {
     return 'computed title from hook';
   },
 } as const;
-const ROUTE_1 = Route.create({
+
+const NOT_FOUND = Route.create({
   ...BASE_ROUTE,
-  key: 'route 1 key',
+  key: 'Not Found Page',
   path: '*',
 });
-const ROUTE_2 = Route.create({
+const USER_PROFILE = Route.create({
   ...BASE_ROUTE,
-  key: 'route 2 key',
-  path: 'route 2',
-  children: [ROUTE_1],
-});
-const ROUTE_3 = Route.create({
-  ...BASE_ROUTE,
-  key: 'route 3 key',
-  path: ':param1/:param2', // must include both :param1 and :param2
+  key: 'Users - User Profile',
+  path: 'profile/:id',
   params: {
-    param1: 'test',
-    param2: 'other test',
+    id: 'test',
+  },
+});
+const USERS = Route.create({
+  ...BASE_ROUTE,
+  key: 'Users',
+  path: '/users',
+  children: [USER_PROFILE],
+});
+const SETTINGS = Route.create({
+  ...BASE_ROUTE,
+  key: 'Settings',
+  path: '/settings/:setting',
+  params: {
+    setting: 'something',
   },
 });
 
 const { Link } = Router.generate({
-  routes: [ROUTE_2, ROUTE_3],
+  routes: [USERS, SETTINGS, NOT_FOUND],
   useState() {
     return {};
   },
@@ -206,7 +223,7 @@ const { Link } = Router.generate({
 
 const SomeThingWithTypesafeLink = () => (
   <>
-    <Link to="route 3 key" />
-    <Link to="route 1 key" />
+    <Link to="Not Found Page" setting={'test'} />
+    <Link to="Users - User Profile"  />
   </>
 );

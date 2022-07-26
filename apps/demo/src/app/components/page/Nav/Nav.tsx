@@ -17,12 +17,21 @@ const Nav: React.FC = () => {
     <Bar>
       {COLORS.map((col) => {
         return (
-          // <Link key={col} to={`/club/color/${col}`}>
-          //   {col}
-          // </Link>
-          <Link key={col} to={'Colorr Club'}>
-            {col}
-          </Link>
+          <>
+            {/* <Link key={col} to={`/club/color/${col}`}>
+              {col}
+            </Link> */}
+            <Link key={col} to={'Colorr Club'} color={col}>
+              {col}
+            </Link>
+            <Link
+              key={col + 't'}
+              to={'not found'}
+              // color={col} // not want
+            >
+              Not Found
+            </Link>
+          </>
         );
       })}
     </Bar>
