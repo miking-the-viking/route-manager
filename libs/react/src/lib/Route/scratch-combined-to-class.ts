@@ -179,26 +179,41 @@ type ParameterizedOfAll<K extends string, P extends string> = (
   ? I
   : never;
 
-function takesOneOfAll<K extends string, P extends string>(
-  ofAll: ParameterizedOfAll<K, P>
+function takesOneOfAll<K extends EitherOfAll['key'], P extends string>(
+  ofAll: Extract<EitherOfAll, ParameterizedOfAll<K, P>> &
+    ParameterizedKeyed<K, P>
+  // ofAll: Extract<EitherOfAll, ParameterizedOfAll<K, P>>
 ): ParameterizedOfAll<K, P>;
-function takesOneOfAll<K extends string>(ofAll: EitherOfAll): Keyed<K>;
+function takesOneOfAll<K extends EitherOfAll['key']>(
+  ofAll: EitherOfAll & Keyed<K>
+  // ofAll: Exclude<EitherOfAll, ParameterizedOfAll<K, any>> & Keyed<K>
+): Keyed<K>;
 function takesOneOfAll(ofAll: EitherOfAll) {
-  // if (ParameterizedKeyed.isParameterized(ofAll)) return ofAll;
-  // if (Keyed.isKeyed(ofAll)) return ofAll;
   return ofAll;
 }
 
-const testOfAll = takesOneOfAll({
+// CON: No suggestion for `key` value "keyed", but suggestions for "parameterized-A" and "parameterized-B" - WHY?
+// PRO: right type: const testOneOfAllKeyed: Keyed<"keyed">,
+const testOneOfAllKeyed = takesOneOfAll({
   key: 'keyed',
 });
 
-// should be compilation error as keyed has no params
+// PRO: compilation error when adding params to keyed only
 const testOfAllExtraParams = takesOneOfAll({
   key: 'keyed',
   params: {
     // should scream here
     paramA: 'test',
+  },
+});
+
+// right type const testOfAll: ParameterizedKeyed<"parameterized-B", "paramB" | "mikes-param-B">
+// PRO: suggests the correct params
+const testOfAll = takesOneOfAll({
+  key: 'parameterized-B',
+  params: {
+    'mikes-param-B': 'test',
+    paramB: 'test',
   },
 });
 
