@@ -19,8 +19,13 @@ type KeyOfRoutes<
 export type RouterProps<
   Key extends string,
   State extends Record<string, any>,
-  Params extends string
-> = Parameters<typeof Router<Key, State, Params>['generate']>[number];
+  Params extends string,
+  RoutesType extends
+    | StaticRoute<Key, State>
+    | ParameterizedRoute<Key, Params, State>
+> = Parameters<
+  typeof Router<Key, State, Params, RoutesType>['generate']
+>[number];
 
 /**
  * Wrap the router in
@@ -31,12 +36,15 @@ export type RouterProps<
 function setupRouterWrappers<
   Key extends string,
   State extends Record<string, any>,
-  Params extends string
+  Params extends string,
+  RoutesType extends
+    | StaticRoute<Key, State>
+    | ParameterizedRoute<Key, Params, State>
 >(
   {
     routes,
     Layout, //useState
-  }: RouterProps<Key, State, Params>,
+  }: RouterProps<Key, State, Params, RoutesType>,
   ref: React.MutableRefObject<JSX.Element | null>,
   inRouterAlready: boolean
 ) {
@@ -91,27 +99,27 @@ type ParamOfRoutes<
 class Router<
   Key extends string,
   AppState extends Record<string, any>,
-  ParamKeys extends string
+  ParamKeys extends string,
+  RoutesType extends
+    | StaticRoute<Key, AppState>
+    | ParameterizedRoute<Key, ParamKeys, AppState>
 > {
-  /**
-   * Typesafe Link component for use in the Application that will autosuggest `to` and `props` (hopefully)
-   */
-  public readonly Link: typeof SafeLink<
-    KeyOfRoutes<Key, AppState>,
-    Record<ParamKeys, any>
-  >;
+  // /**
+  //  * Typesafe Link component for use in the Application that will autosuggest `to` and `props` (hopefully)
+  //  */
+  // public readonly Link: typeof SafeLink<
+  //   KeyOfRoutes<Key, AppState>,
+  //   Record<ParamKeys, any>
+  // >;
 
   constructor(
     /**
      * Routes for a router are an array of Static and ParameterizedRoutes
      */
-    public readonly routes: (
-      | StaticRoute<Key, AppState>
-      | ParameterizedRoute<Key, ParamKeys, AppState>
-    )[],
+    public readonly routes: Array<RoutesType>,
     public readonly Layout?: React.FC<PropsWithChildren>
   ) {
-    this.Link = SafeLink;
+    // this.Link = SafeLink;
   }
 
   public useRouterContext() {
@@ -123,6 +131,18 @@ class Router<
     );
   }
 
+  public Link: React.FC<
+    PropsWithChildren<
+      RoutesType extends ParameterizedRoute<Key, ParamKeys, AppState>
+        ? {
+            to: RoutesType['key'];
+          } & RoutesType['params']
+        : {
+            to: RoutesType['key'];
+          }
+    >
+  > = ({ to, ...params }) => <p>to: {to}</p>;
+
   /**
    * `generate` is used for an applications router file.
    * Use this to generate type-safe router methods based on the application routes
@@ -130,7 +150,10 @@ class Router<
   static generate<
     Key extends string,
     State extends Record<string, any>,
-    ParamKeys extends string
+    ParamKeys extends string,
+    RoutesType extends
+      | StaticRoute<Key, State>
+      | ParameterizedRoute<Key, ParamKeys, State>
   >({
     routes,
     Layout,
@@ -139,14 +162,11 @@ class Router<
     /**
      * Routes are an array of Static and Parameterized routes
      */
-    routes: (
-      | StaticRoute<Key, State>
-      | ParameterizedRoute<Key, ParamKeys, State>
-    )[];
+    routes: Array<RoutesType>;
     Layout?: React.FC<PropsWithChildren>;
     useState: () => State;
   }) {
-    return new Router(routes, Layout);
+    return new Router<Key, State, ParamKeys, RoutesType>(routes, Layout);
   }
 
   /**
@@ -194,9 +214,9 @@ const NOT_FOUND = Route.create({
 const USER_PROFILE = Route.create({
   ...BASE_ROUTE,
   key: 'Users - User Profile',
-  path: 'profile/:id',
+  path: 'profile/:uid',
   params: {
-    id: 'test',
+    uid: 'test',
   },
 });
 const USERS = Route.create({
@@ -221,9 +241,19 @@ const { Link } = Router.generate({
   },
 });
 
+Link({
+  to: 'Settings',
+  setting: 'test',
+});
+
+Link({
+  to: 'Not Found Page',
+});
+
 const SomeThingWithTypesafeLink = () => (
   <>
-    <Link to="Not Found Page" setting={'test'} />
-    <Link to="Users - User Profile"  />
+    <Link to="Not Found Page" />
+    <Link to="Settings" setting="test-setting" />
+    <Link to="Users - User Profile" uid={'something'} />
   </>
 );

@@ -178,18 +178,13 @@ type ParameterizedOfAll<K extends string, P extends string> = (
 ) extends (x: infer I) => void
   ? I
   : never;
-type NonParameterizedOfAll<K extends string> = (
-  EitherOfAll extends any ? (x: Keyed<K>) => void : never
-) extends (x: infer I) => void
-  ? I
-  : never;
 
 function takesOneOfAll<K extends EitherOfAll['key'], P extends string>(
   ofAll: Extract<EitherOfAll, ParameterizedOfAll<K, P>>
 ): ParameterizedOfAll<K, P>;
 function takesOneOfAll<K extends EitherOfAll['key']>(
+  // ofAll: Exclude<EitherOfAll, Extract<EitherOfAll, ParameterizedOfAll<K, any>>>
   ofAll: EitherOfAll & Keyed<K>
-  // ofAll: Exclude<EitherOfAll, ParameterizedOfAll<K, any>> & Keyed<K>
 ): Keyed<K>;
 function takesOneOfAll(ofAll: EitherOfAll) {
   return ofAll;

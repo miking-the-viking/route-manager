@@ -1,6 +1,5 @@
-// import { Link } from 'react-router-dom';
+import { Link as OgLink } from 'react-router-dom';
 import styled from 'styled-components';
-import useRouteManagerContext from '../../../../../../../libs/react/src/lib/contexts/RouteManagerContext/hooks/useRouteManagerContext';
 import { COLORS } from '../../../context/Favourites/Color';
 import router from '../../../router';
 
@@ -18,14 +17,15 @@ const Nav: React.FC = () => {
       {COLORS.map((col) => {
         return (
           <>
-            {/* <Link key={col} to={`/club/color/${col}`}>
+            <OgLink key={col} to={`/club/color/${col}`}>
               {col}
-            </Link> */}
+            </OgLink>
             <Link key={col} to={'Colorr Club'} color={col}>
               {col}
             </Link>
+            {/* Not FOund link should NOT require color prop. */}
             <Link
-              key={col + 't'}
+              key={col + 'notfound'}
               to={'not found'}
               // color={col} // not want
             >
